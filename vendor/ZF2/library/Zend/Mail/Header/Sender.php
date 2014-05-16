@@ -31,21 +31,27 @@ class Sender implements HeaderInterface
         list($name, $value) = GenericHeader::splitHeaderLine($decodedLine);
 
         // check to ensure proper header type for this factory
-        if (strtolower($name) !== 'sender') {
+        if (strtolower($name) !== 'sender')
+        {
             throw new Exception\InvalidArgumentException('Invalid header line for Sender string');
         }
 
         $header = new static();
-        if ($decodedLine != $headerLine) {
+        if ($decodedLine != $headerLine)
+        {
             $header->setEncoding('UTF-8');
         }
 
         // Check for address, and set if found
-        if (preg_match('/^(?P<name>.*?)<(?P<email>[^>]+)>$/', $value, $matches)) {
+        if (preg_match('/^(?P<name>.*?)<(?P<email>[^>]+)>$/', $value, $matches))
+        {
             $name = $matches['name'];
-            if (empty($name)) {
+            if (empty($name))
+            {
                 $name = null;
-            } else {
+            }
+            else
+            {
                 $name = iconv_mime_decode($name, ICONV_MIME_DECODE_CONTINUE_ON_ERROR, 'UTF-8');
             }
             $header->setAddress($matches['email'], $name);
@@ -61,18 +67,21 @@ class Sender implements HeaderInterface
 
     public function getFieldValue($format = HeaderInterface::FORMAT_RAW)
     {
-        if (!$this->address instanceof Mail\Address\AddressInterface) {
+        if (!$this->address instanceof Mail\Address\AddressInterface)
+        {
             return '';
         }
 
         $email = sprintf('<%s>', $this->address->getEmail());
         $name  = $this->address->getName();
-        if (!empty($name)) {
+        if (!empty($name))
+        {
             $encoding = $this->getEncoding();
             if ($format == HeaderInterface::FORMAT_ENCODED
                 && 'ASCII' !== $encoding
-            ) {
-                $name  = HeaderWrap::mimeEncodeValue($name, $encoding);
+            )
+            {
+                $name = HeaderWrap::mimeEncodeValue($name, $encoding);
             }
             $email = sprintf('%s %s', $name, $email);
         }
@@ -105,9 +114,12 @@ class Sender implements HeaderInterface
      */
     public function setAddress($emailOrAddress, $name = null)
     {
-        if (is_string($emailOrAddress)) {
+        if (is_string($emailOrAddress))
+        {
             $emailOrAddress = new Mail\Address($emailOrAddress, $name);
-        } elseif (!$emailOrAddress instanceof Mail\Address\AddressInterface) {
+        }
+        elseif (!$emailOrAddress instanceof Mail\Address\AddressInterface)
+        {
             throw new Exception\InvalidArgumentException(sprintf(
                 '%s expects a string or AddressInterface object; received "%s"',
                 __METHOD__,

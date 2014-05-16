@@ -37,34 +37,46 @@ class Bcmath implements AdapterInterface
         $sign    = (strpos($operand, '-') === 0) ? '-' : '';
         $operand = ltrim($operand, '-+');
 
-        if (null === $base) {
+        if (null === $base)
+        {
             // decimal
-            if (preg_match('#^([1-9][0-9]*)$#', $operand, $m)) {
+            if (preg_match('#^([1-9][0-9]*)$#', $operand, $m))
+            {
                 $base    = 10;
                 $operand = $m[1];
-            // octal
-            } elseif (preg_match('#^(0[0-7]+)$#', $operand, $m)) {
+                // octal
+            }
+            elseif (preg_match('#^(0[0-7]+)$#', $operand, $m))
+            {
                 $base    = 8;
                 $operand = $m[1];
-            // hex
-            } elseif (preg_match('#^(?:0x)?([0-9a-f]+)$#', strtolower($operand), $m)) {
+                // hex
+            }
+            elseif (preg_match('#^(?:0x)?([0-9a-f]+)$#', strtolower($operand), $m))
+            {
                 $base    = 16;
                 $operand = $m[1];
-            // scientific notation
-            } elseif (preg_match('#^([1-9]?\.?[0-9]+)[eE]\+?([0-9]+)$#', $operand, $m)) {
+                // scientific notation
+            }
+            elseif (preg_match('#^([1-9]?\.?[0-9]+)[eE]\+?([0-9]+)$#', $operand, $m))
+            {
                 $base    = 10;
                 $operand = bcmul($m[1], bcpow('10', $m[2]));
-            } else {
+            }
+            else
+            {
                 return false;
             }
         }
 
-        if ($base != 10) {
+        if ($base != 10)
+        {
             $operand = $this->baseConvert($operand, $base, 10);
         }
 
         $prod = bcmul($operand, '1');
-        if (bccomp($operand, $prod) !== 0) {
+        if (bccomp($operand, $prod) !== 0)
+        {
             return false;
         }
 
@@ -118,7 +130,8 @@ class Bcmath implements AdapterInterface
      */
     public function div($leftOperand, $rightOperand)
     {
-        if ($rightOperand == 0) {
+        if ($rightOperand == 0)
+        {
             throw new Exception\DivisionByZeroException(
                 "Division by zero; divisor = {$rightOperand}"
             );
@@ -211,28 +224,33 @@ class Bcmath implements AdapterInterface
      */
     public function intToBin($operand, $twoc = false)
     {
-        $nb = chr(0);
+        $nb         = chr(0);
         $isNegative = (strpos($operand, '-') === 0) ? true : false;
         $operand    = ltrim($operand, '+-0');
 
-        if (empty($operand)) {
+        if (empty($operand))
+        {
             return $nb;
         }
 
-        if ($isNegative && $twoc) {
+        if ($isNegative && $twoc)
+        {
             $operand = bcsub($operand, '1');
         }
 
         $bytes = '';
-        while (bccomp($operand, '0', 0) > 0) {
+        while (bccomp($operand, '0', 0) > 0)
+        {
             $temp    = bcmod($operand, '16777216');
             $bytes   = chr($temp >> 16) . chr($temp >> 8) . chr($temp) . $bytes;
             $operand = bcdiv($operand, '16777216');
         }
         $bytes = ltrim($bytes, $nb);
 
-        if ($twoc) {
-            if (ord($bytes[0]) & 0x80) {
+        if ($twoc)
+        {
+            if (ord($bytes[0]) & 0x80)
+            {
                 $bytes = $nb . $bytes;
             }
             return $isNegative ? ~$bytes : $bytes;
@@ -245,30 +263,35 @@ class Bcmath implements AdapterInterface
      * Convert big integer into it's binary number representation
      *
      * @param  string $bytes
-     * @param  bool   $twoc whether binary number is in twos' complement form
+     * @param  bool $twoc whether binary number is in twos' complement form
      * @return string
      */
     public function binToInt($bytes, $twoc = false)
     {
         $isNegative = ((ord($bytes[0]) & 0x80) && $twoc);
 
-        if ($isNegative) {
+        if ($isNegative)
+        {
             $bytes = ~$bytes;
         }
 
-        $len = (strlen($bytes) + 3) & 0xfffffffc;
+        $len   = (strlen($bytes) + 3) & 0xfffffffc;
         $bytes = str_pad($bytes, $len, chr(0), STR_PAD_LEFT);
 
         $result = '0';
-        for ($i = 0; $i < $len; $i += 4) {
+        for ($i = 0; $i < $len; $i += 4)
+        {
             $result = bcmul($result, '4294967296'); // 2**32
-            $result = bcadd($result, 0x1000000 * ord($bytes[$i]) +
-                    ((ord($bytes[$i + 1]) << 16) |
-                     (ord($bytes[$i + 2]) << 8) |
-                      ord($bytes[$i + 3])));
+            $result = bcadd(
+                $result, 0x1000000 * ord($bytes[$i]) +
+                ((ord($bytes[$i + 1]) << 16) |
+                    (ord($bytes[$i + 2]) << 8) |
+                    ord($bytes[$i + 3]))
+            );
         }
 
-        if ($isNegative) {
+        if ($isNegative)
+        {
             $result = bcsub('-' . $result, '1');
         }
 
@@ -279,23 +302,26 @@ class Bcmath implements AdapterInterface
      * Base conversion. Bases 2..62 are supported
      *
      * @param  string $operand
-     * @param  int    $fromBase
-     * @param  int    $toBase
+     * @param  int $fromBase
+     * @param  int $toBase
      * @return string
      * @throws Exception\InvalidArgumentException
      */
     public function baseConvert($operand, $fromBase, $toBase = 10)
     {
-        if ($fromBase == $toBase) {
+        if ($fromBase == $toBase)
+        {
             return $operand;
         }
 
-        if ($fromBase < 2 || $fromBase > 62) {
+        if ($fromBase < 2 || $fromBase > 62)
+        {
             throw new Exception\InvalidArgumentException(
                 "Unsupported base: {$fromBase}, should be 2..62"
             );
         }
-        if ($toBase < 2 || $toBase > 62) {
+        if ($toBase < 2 || $toBase > 62)
+        {
             throw new Exception\InvalidArgumentException(
                 "Unsupported base: {$toBase}, should be 2..62"
             );
@@ -307,27 +333,34 @@ class Bcmath implements AdapterInterface
         $chars = self::BASE62_ALPHABET;
 
         // convert to decimal
-        if ($fromBase == 10) {
+        if ($fromBase == 10)
+        {
             $decimal = $operand;
-        } else {
+        }
+        else
+        {
             $decimal = '0';
-            for ($i = 0, $len  = strlen($operand); $i < $len; $i++) {
+            for ($i = 0, $len = strlen($operand); $i < $len; $i++)
+            {
                 $decimal = bcmul($decimal, $fromBase);
                 $decimal = bcadd($decimal, strpos($chars, $operand[$i]));
             }
         }
 
-        if ($toBase == 10) {
+        if ($toBase == 10)
+        {
             return $decimal;
         }
 
         // convert decimal to base
         $result = '';
-        do {
+        do
+        {
             $remainder = bcmod($decimal, $toBase);
             $decimal   = bcdiv($decimal, $toBase);
             $result    = $chars[$remainder] . $result;
-        } while (bccomp($decimal, '0'));
+        }
+        while (bccomp($decimal, '0'));
 
         return $sign . $result;
     }

@@ -49,11 +49,13 @@ class MongoDB extends AbstractWriter
      */
     public function __construct($mongo, $database = null, $collection = null, array $saveOptions = array())
     {
-        if ($mongo instanceof Traversable) {
+        if ($mongo instanceof Traversable)
+        {
             // Configuration may be multi-dimensional due to save options
             $mongo = ArrayUtils::iteratorToArray($mongo);
         }
-        if (is_array($mongo)) {
+        if (is_array($mongo))
+        {
             parent::__construct($mongo);
             $saveOptions = isset($mongo['save_options']) ? $mongo['save_options'] : array();
             $collection  = isset($mongo['collection']) ? $mongo['collection'] : null;
@@ -61,19 +63,22 @@ class MongoDB extends AbstractWriter
             $mongo       = isset($mongo['mongo']) ? $mongo['mongo'] : null;
         }
 
-        if (null === $collection) {
+        if (null === $collection)
+        {
             throw new Exception\InvalidArgumentException(
-                    'The collection parameter cannot be empty'
+                'The collection parameter cannot be empty'
             );
         }
 
-        if (null === $database) {
+        if (null === $database)
+        {
             throw new Exception\InvalidArgumentException(
-                    'The database parameter cannot be empty'
+                'The database parameter cannot be empty'
             );
         }
 
-        if (!($mongo instanceof MongoClient || $mongo instanceof Mongo)) {
+        if (!($mongo instanceof MongoClient || $mongo instanceof Mongo))
+        {
             throw new Exception\InvalidArgumentException(sprintf(
                 'Parameter of type %s is invalid; must be MongoClient or Mongo',
                 (is_object($mongo) ? get_class($mongo) : gettype($mongo))
@@ -104,11 +109,13 @@ class MongoDB extends AbstractWriter
      */
     protected function doWrite(array $event)
     {
-        if (null === $this->mongoCollection) {
+        if (null === $this->mongoCollection)
+        {
             throw new Exception\RuntimeException('MongoCollection must be defined');
         }
 
-        if (isset($event['timestamp']) && $event['timestamp'] instanceof DateTime) {
+        if (isset($event['timestamp']) && $event['timestamp'] instanceof DateTime)
+        {
             $event['timestamp'] = new MongoDate($event['timestamp']->getTimestamp());
         }
 

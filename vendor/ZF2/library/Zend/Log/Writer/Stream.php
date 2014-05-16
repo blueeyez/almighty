@@ -42,31 +42,37 @@ class Stream extends AbstractWriter
      */
     public function __construct($streamOrUrl, $mode = null, $logSeparator = null)
     {
-        if ($streamOrUrl instanceof Traversable) {
+        if ($streamOrUrl instanceof Traversable)
+        {
             $streamOrUrl = iterator_to_array($streamOrUrl);
         }
 
-        if (is_array($streamOrUrl)) {
+        if (is_array($streamOrUrl))
+        {
             parent::__construct($streamOrUrl);
-            $mode         = isset($streamOrUrl['mode'])          ? $streamOrUrl['mode']          : null;
+            $mode         = isset($streamOrUrl['mode']) ? $streamOrUrl['mode'] : null;
             $logSeparator = isset($streamOrUrl['log_separator']) ? $streamOrUrl['log_separator'] : null;
-            $streamOrUrl  = isset($streamOrUrl['stream'])        ? $streamOrUrl['stream']        : null;
+            $streamOrUrl  = isset($streamOrUrl['stream']) ? $streamOrUrl['stream'] : null;
         }
 
         // Setting the default mode
-        if (null === $mode) {
+        if (null === $mode)
+        {
             $mode = 'a';
         }
 
-        if (is_resource($streamOrUrl)) {
-            if ('stream' != get_resource_type($streamOrUrl)) {
+        if (is_resource($streamOrUrl))
+        {
+            if ('stream' != get_resource_type($streamOrUrl))
+            {
                 throw new Exception\InvalidArgumentException(sprintf(
                     'Resource is not a stream; received "%s',
                     get_resource_type($streamOrUrl)
                 ));
             }
 
-            if ('a' != $mode) {
+            if ('a' != $mode)
+            {
                 throw new Exception\InvalidArgumentException(sprintf(
                     'Mode must be "a" on existing streams; received "%s"',
                     $mode
@@ -74,11 +80,14 @@ class Stream extends AbstractWriter
             }
 
             $this->stream = $streamOrUrl;
-        } else {
+        }
+        else
+        {
             ErrorHandler::start();
             $this->stream = fopen($streamOrUrl, $mode, false);
-            $error = ErrorHandler::stop();
-            if (!$this->stream) {
+            $error        = ErrorHandler::stop();
+            if (!$this->stream)
+            {
                 throw new Exception\RuntimeException(sprintf(
                     '"%s" cannot be opened with mode "%s"',
                     $streamOrUrl,
@@ -87,11 +96,13 @@ class Stream extends AbstractWriter
             }
         }
 
-        if (null !== $logSeparator) {
+        if (null !== $logSeparator)
+        {
             $this->setLogSeparator($logSeparator);
         }
 
-        if ($this->formatter === null) {
+        if ($this->formatter === null)
+        {
             $this->formatter = new SimpleFormatter();
         }
     }
@@ -117,7 +128,7 @@ class Stream extends AbstractWriter
      */
     public function setLogSeparator($logSeparator)
     {
-        $this->logSeparator = (string) $logSeparator;
+        $this->logSeparator = (string)$logSeparator;
         return $this;
     }
 
@@ -138,7 +149,8 @@ class Stream extends AbstractWriter
      */
     public function shutdown()
     {
-        if (is_resource($this->stream)) {
+        if (is_resource($this->stream))
+        {
             fclose($this->stream);
         }
     }

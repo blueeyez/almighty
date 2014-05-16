@@ -48,7 +48,8 @@ class DefaultListenerAggregate extends AbstractListener implements
         // High priority, because most other loadModule listeners will assume the module's classes are available via autoloading
         $this->listeners[] = $events->attach(ModuleEvent::EVENT_LOAD_MODULE, new AutoloaderListener($options), 9000);
 
-        if ($options->getCheckDependencies()) {
+        if ($options->getCheckDependencies())
+        {
             $this->listeners[] = $events->attach(ModuleEvent::EVENT_LOAD_MODULE, new ModuleDependencyCheckerListener, 8000);
         }
 
@@ -67,18 +68,24 @@ class DefaultListenerAggregate extends AbstractListener implements
      */
     public function detach(EventManagerInterface $events)
     {
-        foreach ($this->listeners as $key => $listener) {
+        foreach ($this->listeners as $key => $listener)
+        {
             $detached = false;
-            if ($listener === $this) {
+            if ($listener === $this)
+            {
                 continue;
             }
-            if ($listener instanceof ListenerAggregateInterface) {
+            if ($listener instanceof ListenerAggregateInterface)
+            {
                 $detached = $listener->detach($events);
-            } elseif ($listener instanceof CallbackHandler) {
+            }
+            elseif ($listener instanceof CallbackHandler)
+            {
                 $detached = $events->detach($listener);
             }
 
-            if ($detached) {
+            if ($detached)
+            {
                 unset($this->listeners[$key]);
             }
         }
@@ -91,7 +98,8 @@ class DefaultListenerAggregate extends AbstractListener implements
      */
     public function getConfigListener()
     {
-        if (!$this->configListener instanceof ConfigMergerInterface) {
+        if (!$this->configListener instanceof ConfigMergerInterface)
+        {
             $this->setConfigListener(new ConfigListener($this->getOptions()));
         }
         return $this->configListener;

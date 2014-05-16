@@ -60,15 +60,16 @@ class DiServiceFactory extends Di implements FactoryInterface
      */
     public function __construct(Di $di, $name, array $parameters = array(), $useServiceLocator = self::USE_SL_NONE)
     {
-        $this->di = $di;
-        $this->name = $name;
+        $this->di         = $di;
+        $this->name       = $name;
         $this->parameters = $parameters;
-        if (in_array($useServiceLocator, array(self::USE_SL_BEFORE_DI, self::USE_SL_AFTER_DI, self::USE_SL_NONE))) {
+        if (in_array($useServiceLocator, array(self::USE_SL_BEFORE_DI, self::USE_SL_AFTER_DI, self::USE_SL_NONE)))
+        {
             $this->useServiceLocator = $useServiceLocator;
         }
 
         // since we are using this in a proxy-fashion, localize state
-        $this->definitions = $this->di->definitions;
+        $this->definitions     = $this->di->definitions;
         $this->instanceManager = $this->di->instanceManager;
     }
 
@@ -95,21 +96,27 @@ class DiServiceFactory extends Di implements FactoryInterface
     public function get($name, array $params = array())
     {
         // allow this di service to get dependencies from the service locator BEFORE trying di
-        if ($this->useServiceLocator == self::USE_SL_BEFORE_DI && $this->serviceLocator->has($name)) {
+        if ($this->useServiceLocator == self::USE_SL_BEFORE_DI && $this->serviceLocator->has($name))
+        {
             return $this->serviceLocator->get($name);
         }
 
-        try {
+        try
+        {
 
             $service = parent::get($name, $params);
             return $service;
-
-        } catch (DiClassNotFoundException $e) {
+        }
+        catch (DiClassNotFoundException $e)
+        {
 
             // allow this di service to get dependencies from the service locator AFTER trying di
-            if ($this->useServiceLocator == self::USE_SL_AFTER_DI && $this->serviceLocator->has($name)) {
+            if ($this->useServiceLocator == self::USE_SL_AFTER_DI && $this->serviceLocator->has($name))
+            {
                 return $this->serviceLocator->get($name);
-            } else {
+            }
+            else
+            {
                 throw new Exception\ServiceNotFoundException(
                     sprintf('Service %s was not found in this DI instance', $name),
                     null,
@@ -117,6 +124,5 @@ class DiServiceFactory extends Di implements FactoryInterface
                 );
             }
         }
-
     }
 }

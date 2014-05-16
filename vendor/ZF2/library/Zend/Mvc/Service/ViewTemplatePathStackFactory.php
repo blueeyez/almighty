@@ -31,13 +31,17 @@ class ViewTemplatePathStackFactory implements FactoryInterface
 
         $templatePathStack = new ViewResolver\TemplatePathStack();
 
-        if (is_array($config) && isset($config['view_manager'])) {
+        if (is_array($config) && isset($config['view_manager']))
+        {
             $config = $config['view_manager'];
-            if (is_array($config)) {
-                if (isset($config['template_path_stack'])) {
+            if (is_array($config))
+            {
+                if (isset($config['template_path_stack']))
+                {
                     $templatePathStack->addPaths($config['template_path_stack']);
                 }
-                if (isset($config['default_template_suffix'])) {
+                if (isset($config['default_template_suffix']))
+                {
                     $templatePathStack->setDefaultSuffix($config['default_template_suffix']);
                 }
             }

@@ -59,7 +59,8 @@ class OpenLdap extends Schema\AbstractItem implements ObjectClassInterface
      */
     public function getMustContain()
     {
-        if ($this->inheritedMust === null) {
+        if ($this->inheritedMust === null)
+        {
             $this->resolveInheritance();
         }
         return $this->inheritedMust;
@@ -72,7 +73,8 @@ class OpenLdap extends Schema\AbstractItem implements ObjectClassInterface
      */
     public function getMayContain()
     {
-        if ($this->inheritedMay === null) {
+        if ($this->inheritedMay === null)
+        {
             $this->resolveInheritance();
         }
         return $this->inheritedMay;
@@ -87,7 +89,8 @@ class OpenLdap extends Schema\AbstractItem implements ObjectClassInterface
     {
         $must = $this->must;
         $may  = $this->may;
-        foreach ($this->getParents() as $p) {
+        foreach ($this->getParents() as $p)
+        {
             $must = array_merge($must, $p->getMustContain());
             $may  = array_merge($may, $p->getMayContain());
         }
@@ -117,11 +120,16 @@ class OpenLdap extends Schema\AbstractItem implements ObjectClassInterface
      */
     public function getType()
     {
-        if ($this->structural) {
+        if ($this->structural)
+        {
             return Schema::OBJECTCLASS_TYPE_STRUCTURAL;
-        } elseif ($this->abstract) {
+        }
+        elseif ($this->abstract)
+        {
             return Schema::OBJECTCLASS_TYPE_ABSTRACT;
-        } elseif ($this->auxiliary) {
+        }
+        elseif ($this->auxiliary)
+        {
             return Schema::OBJECTCLASS_TYPE_AUXILIARY;
         }
 

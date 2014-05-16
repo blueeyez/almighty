@@ -30,24 +30,30 @@ class Sliding implements ScrollingStyleInterface
      */
     public function getPages(Paginator $paginator, $pageRange = null)
     {
-        if ($pageRange === null) {
+        if ($pageRange === null)
+        {
             $pageRange = $paginator->getPageRange();
         }
 
         $pageNumber = $paginator->getCurrentPageNumber();
         $pageCount  = count($paginator);
 
-        if ($pageRange > $pageCount) {
+        if ($pageRange > $pageCount)
+        {
             $pageRange = $pageCount;
         }
 
         $delta = ceil($pageRange / 2);
 
-        if ($pageNumber - $delta > $pageCount - $pageRange) {
+        if ($pageNumber - $delta > $pageCount - $pageRange)
+        {
             $lowerBound = $pageCount - $pageRange + 1;
             $upperBound = $pageCount;
-        } else {
-            if ($pageNumber - $delta < 0) {
+        }
+        else
+        {
+            if ($pageNumber - $delta < 0)
+            {
                 $delta = $pageNumber;
             }
 

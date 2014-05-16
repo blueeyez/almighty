@@ -14,4 +14,5 @@ use Zend\Text\Exception;
 class OverflowException
     extends \OverflowException
     implements ExceptionInterface
-{}
+{
+}

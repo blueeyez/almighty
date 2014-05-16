@@ -48,7 +48,8 @@ class SimpleRouteStack implements RouteStackInterface
     {
         $this->routes = new PriorityList();
 
-        if (null === $routePluginManager) {
+        if (null === $routePluginManager)
+        {
             $routePluginManager = new RoutePluginManager();
         }
 
@@ -67,24 +68,30 @@ class SimpleRouteStack implements RouteStackInterface
      */
     public static function factory($options = array())
     {
-        if ($options instanceof Traversable) {
+        if ($options instanceof Traversable)
+        {
             $options = ArrayUtils::iteratorToArray($options);
-        } elseif (!is_array($options)) {
+        }
+        elseif (!is_array($options))
+        {
             throw new Exception\InvalidArgumentException(__METHOD__ . ' expects an array or Traversable set of options');
         }
 
         $routePluginManager = null;
-        if (isset($options['route_plugins'])) {
+        if (isset($options['route_plugins']))
+        {
             $routePluginManager = $options['route_plugins'];
         }
 
         $instance = new static($routePluginManager);
 
-        if (isset($options['routes'])) {
+        if (isset($options['routes']))
+        {
             $instance->addRoutes($options['routes']);
         }
 
-        if (isset($options['default_params'])) {
+        if (isset($options['default_params']))
+        {
             $instance->setDefaultParams($options['default_params']);
         }
 
@@ -132,11 +139,13 @@ class SimpleRouteStack implements RouteStackInterface
      */
     public function addRoutes($routes)
     {
-        if (!is_array($routes) && !$routes instanceof Traversable) {
+        if (!is_array($routes) && !$routes instanceof Traversable)
+        {
             throw new Exception\InvalidArgumentException('addRoutes expects an array or Traversable set of routes');
         }
 
-        foreach ($routes as $name => $route) {
+        foreach ($routes as $name => $route)
+        {
             $this->addRoute($name, $route);
         }
 
@@ -147,18 +156,20 @@ class SimpleRouteStack implements RouteStackInterface
      * addRoute(): defined by RouteStackInterface interface.
      *
      * @see    RouteStackInterface::addRoute()
-     * @param  string  $name
-     * @param  mixed   $route
+     * @param  string $name
+     * @param  mixed $route
      * @param  int $priority
      * @return SimpleRouteStack
      */
     public function addRoute($name, $route, $priority = null)
     {
-        if (!$route instanceof RouteInterface) {
+        if (!$route instanceof RouteInterface)
+        {
             $route = $this->routeFromArray($route);
         }
 
-        if ($priority === null && isset($route->priority)) {
+        if ($priority === null && isset($route->priority))
+        {
             $priority = $route->priority;
         }
 
@@ -241,7 +252,7 @@ class SimpleRouteStack implements RouteStackInterface
      * Set a default parameter.
      *
      * @param  string $name
-     * @param  mixed  $value
+     * @param  mixed $value
      * @return SimpleRouteStack
      */
     public function setDefaultParam($name, $value)
@@ -259,21 +270,28 @@ class SimpleRouteStack implements RouteStackInterface
      */
     protected function routeFromArray($specs)
     {
-        if ($specs instanceof Traversable) {
+        if ($specs instanceof Traversable)
+        {
             $specs = ArrayUtils::iteratorToArray($specs);
-        } elseif (!is_array($specs)) {
+        }
+        elseif (!is_array($specs))
+        {
             throw new Exception\InvalidArgumentException('Route definition must be an array or Traversable object');
         }
 
-        if (!isset($specs['type'])) {
+        if (!isset($specs['type']))
+        {
             throw new Exception\InvalidArgumentException('Missing "type" option');
-        } elseif (!isset($specs['options'])) {
+        }
+        elseif (!isset($specs['options']))
+        {
             $specs['options'] = array();
         }
 
         $route = $this->getRoutePluginManager()->get($specs['type'], $specs['options']);
 
-        if (isset($specs['priority'])) {
+        if (isset($specs['priority']))
+        {
             $route->priority = $specs['priority'];
         }
 
@@ -289,12 +307,16 @@ class SimpleRouteStack implements RouteStackInterface
      */
     public function match(Request $request)
     {
-        foreach ($this->routes as $name => $route) {
-            if (($match = $route->match($request)) instanceof RouteMatch) {
+        foreach ($this->routes as $name => $route)
+        {
+            if (($match = $route->match($request)) instanceof RouteMatch)
+            {
                 $match->setMatchedRouteName($name);
 
-                foreach ($this->defaultParams as $paramName => $value) {
-                    if ($match->getParam($paramName) === null) {
+                foreach ($this->defaultParams as $paramName => $value)
+                {
+                    if ($match->getParam($paramName) === null)
+                    {
                         $match->setParam($paramName, $value);
                     }
                 }
@@ -318,13 +340,15 @@ class SimpleRouteStack implements RouteStackInterface
      */
     public function assemble(array $params = array(), array $options = array())
     {
-        if (!isset($options['name'])) {
+        if (!isset($options['name']))
+        {
             throw new Exception\InvalidArgumentException('Missing "name" option');
         }
 
         $route = $this->routes->get($options['name']);
 
-        if (!$route) {
+        if (!$route)
+        {
             throw new Exception\RuntimeException(sprintf('Route with name "%s" not found', $options['name']));
         }
 

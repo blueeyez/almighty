@@ -39,8 +39,10 @@ class Request extends Message implements RequestInterface
      */
     public function __construct(array $args = null, array $env = null)
     {
-        if ($args === null) {
-            if (!isset($_SERVER['argv'])) {
+        if ($args === null)
+        {
+            if (!isset($_SERVER['argv']))
+            {
                 $errorDescription = (ini_get('register_argc_argv') == false)
                     ? "Cannot create Console\\Request because PHP ini option 'register_argc_argv' is set Off"
                     : 'Cannot create Console\\Request because $_SERVER["argv"] is not set for unknown reason.';
@@ -49,14 +51,16 @@ class Request extends Message implements RequestInterface
             $args = $_SERVER['argv'];
         }
 
-        if ($env === null) {
+        if ($env === null)
+        {
             $env = $_ENV;
         }
 
         /**
          * Extract first param assuming it is the script name
          */
-        if (count($args) > 0) {
+        if (count($args) > 0)
+        {
             $this->setScriptName(array_shift($args));
         }
 
@@ -92,7 +96,8 @@ class Request extends Message implements RequestInterface
      */
     public function getParams()
     {
-        if ($this->params === null) {
+        if ($this->params === null)
+        {
             $this->params = new Parameters();
         }
 
@@ -103,8 +108,8 @@ class Request extends Message implements RequestInterface
      * Return a single parameter.
      * Shortcut for $request->params()->get()
      *
-     * @param string    $name       Parameter name
-     * @param string    $default    (optional) default value in case the parameter does not exist
+     * @param string $name Parameter name
+     * @param string $default (optional) default value in case the parameter does not exist
      * @return mixed
      */
     public function getParam($name, $default = null)
@@ -138,8 +143,8 @@ class Request extends Message implements RequestInterface
     /**
      * Return a single parameter container responsible for env parameters
      *
-     * @param string    $name       Parameter name
-     * @param string    $default    (optional) default value in case the parameter does not exist
+     * @param string $name Parameter name
+     * @param string $default (optional) default value in case the parameter does not exist
      * @return \Zend\Stdlib\Parameters
      */
     public function getEnv($name, $default = null)
@@ -154,7 +159,8 @@ class Request extends Message implements RequestInterface
      */
     public function env()
     {
-        if ($this->envParams === null) {
+        if ($this->envParams === null)
+        {
             $this->envParams = new Parameters();
         }
 

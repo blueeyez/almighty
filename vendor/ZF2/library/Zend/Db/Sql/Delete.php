@@ -25,7 +25,7 @@ class Delete extends AbstractSql implements SqlInterface, PreparableSqlInterface
      * @const
      */
     const SPECIFICATION_DELETE = 'delete';
-    const SPECIFICATION_WHERE = 'where';
+    const SPECIFICATION_WHERE  = 'where';
     /**@#-*/
 
     /**
@@ -63,7 +63,8 @@ class Delete extends AbstractSql implements SqlInterface, PreparableSqlInterface
      */
     public function __construct($table = null)
     {
-        if ($table) {
+        if ($table)
+        {
             $this->from($table);
         }
         $this->where = new Where();
@@ -101,43 +102,63 @@ class Delete extends AbstractSql implements SqlInterface, PreparableSqlInterface
      */
     public function where($predicate, $combination = Predicate\PredicateSet::OP_AND)
     {
-        if ($predicate instanceof Where) {
+        if ($predicate instanceof Where)
+        {
             $this->where = $predicate;
-        } elseif ($predicate instanceof \Closure) {
+        }
+        elseif ($predicate instanceof \Closure)
+        {
             $predicate($this->where);
-        } else {
+        }
+        else
+        {
 
-            if (is_string($predicate)) {
+            if (is_string($predicate))
+            {
                 // String $predicate should be passed as an expression
                 $predicate = new Predicate\Expression($predicate);
                 $this->where->addPredicate($predicate, $combination);
-            } elseif (is_array($predicate)) {
+            }
+            elseif (is_array($predicate))
+            {
 
-                foreach ($predicate as $pkey => $pvalue) {
+                foreach ($predicate as $pkey => $pvalue)
+                {
                     // loop through predicates
 
-                    if (is_string($pkey) && strpos($pkey, '?') !== false) {
+                    if (is_string($pkey) && strpos($pkey, '?') !== false)
+                    {
                         // First, process strings that the abstraction replacement character ?
                         // as an Expression predicate
                         $predicate = new Predicate\Expression($pkey, $pvalue);
-
-                    } elseif (is_string($pkey)) {
+                    }
+                    elseif (is_string($pkey))
+                    {
                         // Otherwise, if still a string, do something intelligent with the PHP type provided
 
-                        if ($pvalue === null) {
+                        if ($pvalue === null)
+                        {
                             // map PHP null to SQL IS NULL expression
                             $predicate = new Predicate\IsNull($pkey, $pvalue);
-                        } elseif (is_array($pvalue)) {
+                        }
+                        elseif (is_array($pvalue))
+                        {
                             // if the value is an array, assume IN() is desired
                             $predicate = new Predicate\In($pkey, $pvalue);
-                        } else {
+                        }
+                        else
+                        {
                             // otherwise assume that array('foo' => 'bar') means "foo" = 'bar'
                             $predicate = new Predicate\Operator($pkey, Predicate\Operator::OP_EQ, $pvalue);
                         }
-                    } elseif ($pvalue instanceof Predicate\PredicateInterface) {
+                    }
+                    elseif ($pvalue instanceof Predicate\PredicateInterface)
+                    {
                         // Predicate type is ok
                         $predicate = $pvalue;
-                    } else {
+                    }
+                    else
+                    {
                         // must be an array of expressions (with int-indexed array)
                         $predicate = new Predicate\Expression($pvalue);
                     }
@@ -157,33 +178,37 @@ class Delete extends AbstractSql implements SqlInterface, PreparableSqlInterface
      */
     public function prepareStatement(AdapterInterface $adapter, StatementContainerInterface $statementContainer)
     {
-        $driver = $adapter->getDriver();
-        $platform = $adapter->getPlatform();
+        $driver             = $adapter->getDriver();
+        $platform           = $adapter->getPlatform();
         $parameterContainer = $statementContainer->getParameterContainer();
 
-        if (!$parameterContainer instanceof ParameterContainer) {
+        if (!$parameterContainer instanceof ParameterContainer)
+        {
             $parameterContainer = new ParameterContainer();
             $statementContainer->setParameterContainer($parameterContainer);
         }
 
-        $table = $this->table;
+        $table  = $this->table;
         $schema = null;
 
         // create quoted table name to use in delete processing
-        if ($table instanceof TableIdentifier) {
+        if ($table instanceof TableIdentifier)
+        {
             list($table, $schema) = $table->getTableAndSchema();
         }
 
         $table = $platform->quoteIdentifier($table);
 
-        if ($schema) {
+        if ($schema)
+        {
             $table = $platform->quoteIdentifier($schema) . $platform->getIdentifierSeparator() . $table;
         }
 
         $sql = sprintf($this->specifications[self::SPECIFICATION_DELETE], $table);
 
         // process where
-        if ($this->where->count() > 0) {
+        if ($this->where->count() > 0)
+        {
             $whereParts = $this->processExpression($this->where, $platform, $driver, 'where');
             $parameterContainer->merge($whereParts->getParameterContainer());
             $sql .= ' ' . sprintf($this->specifications[self::SPECIFICATION_WHERE], $whereParts->getSql());
@@ -201,24 +226,27 @@ class Delete extends AbstractSql implements SqlInterface, PreparableSqlInterface
      */
     public function getSqlString(PlatformInterface $adapterPlatform = null)
     {
-        $adapterPlatform = ($adapterPlatform) ?: new Sql92;
-        $table = $this->table;
-        $schema = null;
+        $adapterPlatform = ($adapterPlatform) ? : new Sql92;
+        $table           = $this->table;
+        $schema          = null;
 
         // create quoted table name to use in delete processing
-        if ($table instanceof TableIdentifier) {
+        if ($table instanceof TableIdentifier)
+        {
             list($table, $schema) = $table->getTableAndSchema();
         }
 
         $table = $adapterPlatform->quoteIdentifier($table);
 
-        if ($schema) {
+        if ($schema)
+        {
             $table = $adapterPlatform->quoteIdentifier($schema) . $adapterPlatform->getIdentifierSeparator() . $table;
         }
 
         $sql = sprintf($this->specifications[self::SPECIFICATION_DELETE], $table);
 
-        if ($this->where->count() > 0) {
+        if ($this->where->count() > 0)
+        {
             $whereParts = $this->processExpression($this->where, $adapterPlatform, null, 'where');
             $sql .= ' ' . sprintf($this->specifications[self::SPECIFICATION_WHERE], $whereParts->getSql());
         }
@@ -236,7 +264,8 @@ class Delete extends AbstractSql implements SqlInterface, PreparableSqlInterface
      */
     public function __get($name)
     {
-        switch (strtolower($name)) {
+        switch (strtolower($name))
+        {
             case 'where':
                 return $this->where;
         }

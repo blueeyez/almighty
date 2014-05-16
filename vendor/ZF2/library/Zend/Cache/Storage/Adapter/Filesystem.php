@@ -69,7 +69,8 @@ class Filesystem extends AbstractAdapter implements
      */
     public function setOptions($options)
     {
-        if (!$options instanceof FilesystemOptions) {
+        if (!$options instanceof FilesystemOptions)
+        {
             $options = new FilesystemOptions($options);
         }
 
@@ -84,7 +85,8 @@ class Filesystem extends AbstractAdapter implements
      */
     public function getOptions()
     {
-        if (!$this->options) {
+        if (!$this->options)
+        {
             $this->setOptions(new FilesystemOptions());
         }
         return $this->options;
@@ -100,16 +102,21 @@ class Filesystem extends AbstractAdapter implements
      */
     public function flush()
     {
-        $flags = GlobIterator::SKIP_DOTS | GlobIterator::CURRENT_AS_PATHNAME;
-        $dir   = $this->getOptions()->getCacheDir();
+        $flags       = GlobIterator::SKIP_DOTS | GlobIterator::CURRENT_AS_PATHNAME;
+        $dir         = $this->getOptions()->getCacheDir();
         $clearFolder = null;
-        $clearFolder = function ($dir) use (& $clearFolder, $flags) {
+        $clearFolder = function ($dir) use (& $clearFolder, $flags)
+        {
             $it = new GlobIterator($dir . DIRECTORY_SEPARATOR . '*', $flags);
-            foreach ($it as $pathname) {
-                if ($it->isDir()) {
+            foreach ($it as $pathname)
+            {
+                if ($it->isDir())
+                {
                     $clearFolder($pathname);
                     rmdir($pathname);
-                } else {
+                }
+                else
+                {
                     unlink($pathname);
                 }
             }
@@ -118,7 +125,8 @@ class Filesystem extends AbstractAdapter implements
         ErrorHandler::start();
         $clearFolder($dir);
         $error = ErrorHandler::stop();
-        if ($error) {
+        if ($error)
+        {
             throw new Exception\RuntimeException("Flushing directory '{$dir}' failed", 0, $error);
         }
 
@@ -142,25 +150,29 @@ class Filesystem extends AbstractAdapter implements
         $path  = $options->getCacheDir()
             . str_repeat(DIRECTORY_SEPARATOR . $prefix . '*', $options->getDirLevel())
             . DIRECTORY_SEPARATOR . $prefix . '*.dat';
-        $glob = new GlobIterator($path, $flags);
-        $time = time();
-        $ttl  = $options->getTtl();
+        $glob  = new GlobIterator($path, $flags);
+        $time  = time();
+        $ttl   = $options->getTtl();
 
         ErrorHandler::start();
-        foreach ($glob as $entry) {
+        foreach ($glob as $entry)
+        {
             $mtime = $entry->getMTime();
-            if ($time >= $mtime + $ttl) {
+            if ($time >= $mtime + $ttl)
+            {
                 $pathname = $entry->getPathname();
                 unlink($pathname);
 
                 $tagPathname = substr($pathname, 0, -4) . '.tag';
-                if (file_exists($tagPathname)) {
+                if (file_exists($tagPathname))
+                {
                     unlink($tagPathname);
                 }
             }
         }
         $error = ErrorHandler::stop();
-        if ($error) {
+        if ($error)
+        {
             throw new Exception\RuntimeException("Failed to clear expired items", 0, $error);
         }
 
@@ -178,8 +190,9 @@ class Filesystem extends AbstractAdapter implements
      */
     public function clearByNamespace($namespace)
     {
-        $namespace = (string) $namespace;
-        if ($namespace === '') {
+        $namespace = (string)$namespace;
+        if ($namespace === '')
+        {
             throw new Exception\InvalidArgumentException('No namespace given');
         }
 
@@ -187,17 +200,19 @@ class Filesystem extends AbstractAdapter implements
         $prefix  = $namespace . $options->getNamespaceSeparator();
 
         $flags = GlobIterator::SKIP_DOTS | GlobIterator::CURRENT_AS_PATHNAME;
-        $path = $options->getCacheDir()
+        $path  = $options->getCacheDir()
             . str_repeat(DIRECTORY_SEPARATOR . $prefix . '*', $options->getDirLevel())
             . DIRECTORY_SEPARATOR . $prefix . '*';
-        $glob = new GlobIterator($path, $flags);
+        $glob  = new GlobIterator($path, $flags);
 
         ErrorHandler::start();
-        foreach ($glob as $pathname) {
+        foreach ($glob as $pathname)
+        {
             unlink($pathname);
         }
         $error = ErrorHandler::stop();
-        if ($error) {
+        if ($error)
+        {
             throw new Exception\RuntimeException("Failed to remove files of '{$path}'", 0, $error);
         }
 
@@ -215,8 +230,9 @@ class Filesystem extends AbstractAdapter implements
      */
     public function clearByPrefix($prefix)
     {
-        $prefix = (string) $prefix;
-        if ($prefix === '') {
+        $prefix = (string)$prefix;
+        if ($prefix === '')
+        {
             throw new Exception\InvalidArgumentException('No prefix given');
         }
 
@@ -225,17 +241,19 @@ class Filesystem extends AbstractAdapter implements
         $nsPrefix  = ($namespace === '') ? '' : $namespace . $options->getNamespaceSeparator();
 
         $flags = GlobIterator::SKIP_DOTS | GlobIterator::CURRENT_AS_PATHNAME;
-        $path = $options->getCacheDir()
+        $path  = $options->getCacheDir()
             . str_repeat(DIRECTORY_SEPARATOR . $nsPrefix . '*', $options->getDirLevel())
             . DIRECTORY_SEPARATOR . $nsPrefix . $prefix . '*';
-        $glob = new GlobIterator($path, $flags);
+        $glob  = new GlobIterator($path, $flags);
 
         ErrorHandler::start();
-        foreach ($glob as $pathname) {
+        foreach ($glob as $pathname)
+        {
             unlink($pathname);
         }
         $error = ErrorHandler::stop();
-        if ($error) {
+        if ($error)
+        {
             throw new Exception\RuntimeException("Failed to remove files of '{$path}'", 0, $error);
         }
 
@@ -248,20 +266,22 @@ class Filesystem extends AbstractAdapter implements
      * Set tags to an item by given key.
      * An empty array will remove all tags.
      *
-     * @param string   $key
+     * @param string $key
      * @param string[] $tags
      * @return bool
      */
     public function setTags($key, array $tags)
     {
         $this->normalizeKey($key);
-        if (!$this->internalHasItem($key)) {
+        if (!$this->internalHasItem($key))
+        {
             return false;
         }
 
         $filespec = $this->getFileSpec($key);
 
-        if (!$tags) {
+        if (!$tags)
+        {
             $this->unlink($filespec . '.tag');
             return true;
         }
@@ -279,13 +299,15 @@ class Filesystem extends AbstractAdapter implements
     public function getTags($key)
     {
         $this->normalizeKey($key);
-        if (!$this->internalHasItem($key)) {
+        if (!$this->internalHasItem($key))
+        {
             return false;
         }
 
         $filespec = $this->getFileSpec($key);
         $tags     = array();
-        if (file_exists($filespec . '.tag')) {
+        if (file_exists($filespec . '.tag'))
+        {
             $tags = explode("\n", $this->getFileContent($filespec . '.tag'));
         }
 
@@ -299,12 +321,13 @@ class Filesystem extends AbstractAdapter implements
      * else all given tags must match.
      *
      * @param string[] $tags
-     * @param  bool  $disjunction
+     * @param  bool $disjunction
      * @return bool
      */
     public function clearByTags(array $tags, $disjunction = false)
     {
-        if (!$tags) {
+        if (!$tags)
+        {
             return true;
         }
 
@@ -317,23 +340,29 @@ class Filesystem extends AbstractAdapter implements
         $path  = $options->getCacheDir()
             . str_repeat(DIRECTORY_SEPARATOR . $prefix . '*', $options->getDirLevel())
             . DIRECTORY_SEPARATOR . $prefix . '*.tag';
-        $glob = new GlobIterator($path, $flags);
+        $glob  = new GlobIterator($path, $flags);
 
-        foreach ($glob as $pathname) {
+        foreach ($glob as $pathname)
+        {
             $diff = array_diff($tags, explode("\n", $this->getFileContent($pathname)));
 
-            $rem  = false;
-            if ($disjunction && count($diff) < $tagCount) {
+            $rem = false;
+            if ($disjunction && count($diff) < $tagCount)
+            {
                 $rem = true;
-            } elseif (!$disjunction && !$diff) {
+            }
+            elseif (!$disjunction && !$diff)
+            {
                 $rem = true;
             }
 
-            if ($rem) {
+            if ($rem)
+            {
                 unlink($pathname);
 
                 $datPathname = substr($pathname, 0, -4) . '.dat';
-                if (file_exists($datPathname)) {
+                if (file_exists($datPathname))
+                {
                     unlink($datPathname);
                 }
             }
@@ -371,7 +400,8 @@ class Filesystem extends AbstractAdapter implements
     public function optimize()
     {
         $options = $this->getOptions();
-        if ($options->getDirLevel()) {
+        if ($options->getDirLevel())
+        {
             $namespace = $options->getNamespace();
             $prefix    = ($namespace === '') ? '' : $namespace . $options->getNamespaceSeparator();
 
@@ -391,13 +421,15 @@ class Filesystem extends AbstractAdapter implements
      */
     public function getTotalSpace()
     {
-        if ($this->totalSpace === null) {
+        if ($this->totalSpace === null)
+        {
             $path = $this->getOptions()->getCacheDir();
 
             ErrorHandler::start();
             $total = disk_total_space($path);
             $error = ErrorHandler::stop();
-            if ($total === false) {
+            if ($total === false)
+            {
                 throw new Exception\RuntimeException("Can't detect total space of '{$path}'", 0, $error);
             }
             $this->totalSpace = $total;
@@ -406,14 +438,16 @@ class Filesystem extends AbstractAdapter implements
             $events     = $this->getEventManager();
             $handle     = null;
             $totalSpace = & $this->totalSpace;
-            $callback   = function ($event) use (& $events, & $handle, & $totalSpace) {
+            $callback   = function ($event) use (& $events, & $handle, & $totalSpace)
+            {
                 $params = $event->getParams();
-                if (isset($params['cache_dir'])) {
+                if (isset($params['cache_dir']))
+                {
                     $totalSpace = null;
                     $events->detach($handle);
                 }
             };
-            $handle = $events->attach('option', $callback);
+            $handle     = $events->attach('option', $callback);
         }
 
         return $this->totalSpace;
@@ -434,7 +468,8 @@ class Filesystem extends AbstractAdapter implements
         ErrorHandler::start();
         $avail = disk_free_space($path);
         $error = ErrorHandler::stop();
-        if ($avail === false) {
+        if ($avail === false)
+        {
             throw new Exception\RuntimeException("Can't detect free space of '{$path}'", 0, $error);
         }
 
@@ -446,9 +481,9 @@ class Filesystem extends AbstractAdapter implements
     /**
      * Get an item.
      *
-     * @param  string  $key
+     * @param  string $key
      * @param  bool $success
-     * @param  mixed   $casToken
+     * @param  mixed $casToken
      * @return mixed Data on success, null on failure
      * @throws Exception\ExceptionInterface
      *
@@ -459,14 +494,18 @@ class Filesystem extends AbstractAdapter implements
     public function getItem($key, & $success = null, & $casToken = null)
     {
         $options = $this->getOptions();
-        if ($options->getReadable() && $options->getClearStatCache()) {
+        if ($options->getReadable() && $options->getClearStatCache())
+        {
             clearstatcache();
         }
 
         $argn = func_num_args();
-        if ($argn > 2) {
+        if ($argn > 2)
+        {
             return parent::getItem($key, $success, $casToken);
-        } elseif ($argn > 1) {
+        }
+        elseif ($argn > 1)
+        {
             return parent::getItem($key, $success);
         }
 
@@ -487,7 +526,8 @@ class Filesystem extends AbstractAdapter implements
     public function getItems(array $keys)
     {
         $options = $this->getOptions();
-        if ($options->getReadable() && $options->getClearStatCache()) {
+        if ($options->getReadable() && $options->getClearStatCache())
+        {
             clearstatcache();
         }
 
@@ -497,31 +537,35 @@ class Filesystem extends AbstractAdapter implements
     /**
      * Internal method to get an item.
      *
-     * @param  string  $normalizedKey
+     * @param  string $normalizedKey
      * @param  bool $success
-     * @param  mixed   $casToken
+     * @param  mixed $casToken
      * @return mixed Data on success, null on failure
      * @throws Exception\ExceptionInterface
      */
     protected function internalGetItem(& $normalizedKey, & $success = null, & $casToken = null)
     {
-        if (!$this->internalHasItem($normalizedKey)) {
+        if (!$this->internalHasItem($normalizedKey))
+        {
             $success = false;
             return null;
         }
 
-        try {
+        try
+        {
             $filespec = $this->getFileSpec($normalizedKey);
             $data     = $this->getFileContent($filespec . '.dat');
 
             // use filemtime + filesize as CAS token
-            if (func_num_args() > 2) {
+            if (func_num_args() > 2)
+            {
                 $casToken = filemtime($filespec . '.dat') . filesize($filespec . '.dat');
             }
-            $success  = true;
+            $success = true;
             return $data;
-
-        } catch (BaseException $e) {
+        }
+        catch (BaseException $e)
+        {
             $success = false;
             throw $e;
         }
@@ -539,24 +583,30 @@ class Filesystem extends AbstractAdapter implements
         $options = $this->getOptions();
         $keys    = $normalizedKeys; // Don't change argument passed by reference
         $result  = array();
-        while ($keys) {
+        while ($keys)
+        {
 
             // LOCK_NB if more than one items have to read
             $nonBlocking = count($keys) > 1;
             $wouldblock  = null;
 
             // read items
-            foreach ($keys as $i => $key) {
-                if (!$this->internalHasItem($key)) {
+            foreach ($keys as $i => $key)
+            {
+                if (!$this->internalHasItem($key))
+                {
                     unset($keys[$i]);
                     continue;
                 }
 
                 $filespec = $this->getFileSpec($key);
                 $data     = $this->getFileContent($filespec . '.dat', $nonBlocking, $wouldblock);
-                if ($nonBlocking && $wouldblock) {
+                if ($nonBlocking && $wouldblock)
+                {
                     continue;
-                } else {
+                }
+                else
+                {
                     unset($keys[$i]);
                 }
 
@@ -584,7 +634,8 @@ class Filesystem extends AbstractAdapter implements
     public function hasItem($key)
     {
         $options = $this->getOptions();
-        if ($options->getReadable() && $options->getClearStatCache()) {
+        if ($options->getReadable() && $options->getClearStatCache())
+        {
             clearstatcache();
         }
 
@@ -605,7 +656,8 @@ class Filesystem extends AbstractAdapter implements
     public function hasItems(array $keys)
     {
         $options = $this->getOptions();
-        if ($options->getReadable() && $options->getClearStatCache()) {
+        if ($options->getReadable() && $options->getClearStatCache())
+        {
             clearstatcache();
         }
 
@@ -622,22 +674,26 @@ class Filesystem extends AbstractAdapter implements
     protected function internalHasItem(& $normalizedKey)
     {
         $file = $this->getFileSpec($normalizedKey) . '.dat';
-        if (!file_exists($file)) {
+        if (!file_exists($file))
+        {
             return false;
         }
 
         $ttl = $this->getOptions()->getTtl();
-        if ($ttl) {
+        if ($ttl)
+        {
             ErrorHandler::start();
             $mtime = filemtime($file);
             $error = ErrorHandler::stop();
-            if (!$mtime) {
+            if (!$mtime)
+            {
                 throw new Exception\RuntimeException(
                     "Error getting mtime of file '{$file}'", 0, $error
                 );
             }
 
-            if (time() >= ($mtime + $ttl)) {
+            if (time() >= ($mtime + $ttl))
+            {
                 return false;
             }
         }
@@ -654,7 +710,8 @@ class Filesystem extends AbstractAdapter implements
     public function getMetadata($key)
     {
         $options = $this->getOptions();
-        if ($options->getReadable() && $options->getClearStatCache()) {
+        if ($options->getReadable() && $options->getClearStatCache())
+        {
             clearstatcache();
         }
 
@@ -671,7 +728,8 @@ class Filesystem extends AbstractAdapter implements
     public function getMetadatas(array $keys, array $options = array())
     {
         $options = $this->getOptions();
-        if ($options->getReadable() && $options->getClearStatCache()) {
+        if ($options->getReadable() && $options->getClearStatCache())
+        {
             clearstatcache();
         }
 
@@ -686,7 +744,8 @@ class Filesystem extends AbstractAdapter implements
      */
     protected function internalGetMetadata(& $normalizedKey)
     {
-        if (!$this->internalHasItem($normalizedKey)) {
+        if (!$this->internalHasItem($normalizedKey))
+        {
             return false;
         }
 
@@ -696,14 +755,16 @@ class Filesystem extends AbstractAdapter implements
 
         $metadata = array(
             'filespec' => $filespec,
-            'mtime'    => filemtime($file)
+            'mtime' => filemtime($file)
         );
 
-        if (!$options->getNoCtime()) {
+        if (!$options->getNoCtime())
+        {
             $metadata['ctime'] = filectime($file);
         }
 
-        if (!$options->getNoAtime()) {
+        if (!$options->getNoAtime())
+        {
             $metadata['atime'] = fileatime($file);
         }
 
@@ -722,20 +783,23 @@ class Filesystem extends AbstractAdapter implements
         $options = $this->getOptions();
         $result  = array();
 
-        foreach ($normalizedKeys as $normalizedKey) {
+        foreach ($normalizedKeys as $normalizedKey)
+        {
             $filespec = $this->getFileSpec($normalizedKey);
             $file     = $filespec . '.dat';
 
             $metadata = array(
                 'filespec' => $filespec,
-                'mtime'    => filemtime($file),
+                'mtime' => filemtime($file),
             );
 
-            if (!$options->getNoCtime()) {
+            if (!$options->getNoCtime())
+            {
                 $metadata['ctime'] = filectime($file);
             }
 
-            if (!$options->getNoAtime()) {
+            if (!$options->getNoAtime())
+            {
                 $metadata['atime'] = fileatime($file);
             }
 
@@ -751,7 +815,7 @@ class Filesystem extends AbstractAdapter implements
      * Store an item.
      *
      * @param  string $key
-     * @param  mixed  $value
+     * @param  mixed $value
      * @return bool
      * @throws Exception\ExceptionInterface
      *
@@ -762,7 +826,8 @@ class Filesystem extends AbstractAdapter implements
     public function setItem($key, $value)
     {
         $options = $this->getOptions();
-        if ($options->getWritable() && $options->getClearStatCache()) {
+        if ($options->getWritable() && $options->getClearStatCache())
+        {
             clearstatcache();
         }
         return parent::setItem($key, $value);
@@ -782,7 +847,8 @@ class Filesystem extends AbstractAdapter implements
     public function setItems(array $keyValuePairs)
     {
         $options = $this->getOptions();
-        if ($options->getWritable() && $options->getClearStatCache()) {
+        if ($options->getWritable() && $options->getClearStatCache())
+        {
             clearstatcache();
         }
 
@@ -793,7 +859,7 @@ class Filesystem extends AbstractAdapter implements
      * Add an item.
      *
      * @param  string $key
-     * @param  mixed  $value
+     * @param  mixed $value
      * @return bool
      * @throws Exception\ExceptionInterface
      *
@@ -804,7 +870,8 @@ class Filesystem extends AbstractAdapter implements
     public function addItem($key, $value)
     {
         $options = $this->getOptions();
-        if ($options->getWritable() && $options->getClearStatCache()) {
+        if ($options->getWritable() && $options->getClearStatCache())
+        {
             clearstatcache();
         }
 
@@ -825,7 +892,8 @@ class Filesystem extends AbstractAdapter implements
     public function addItems(array $keyValuePairs)
     {
         $options = $this->getOptions();
-        if ($options->getWritable() && $options->getClearStatCache()) {
+        if ($options->getWritable() && $options->getClearStatCache())
+        {
             clearstatcache();
         }
 
@@ -836,7 +904,7 @@ class Filesystem extends AbstractAdapter implements
      * Replace an existing item.
      *
      * @param  string $key
-     * @param  mixed  $value
+     * @param  mixed $value
      * @return bool
      * @throws Exception\ExceptionInterface
      *
@@ -847,7 +915,8 @@ class Filesystem extends AbstractAdapter implements
     public function replaceItem($key, $value)
     {
         $options = $this->getOptions();
-        if ($options->getWritable() && $options->getClearStatCache()) {
+        if ($options->getWritable() && $options->getClearStatCache())
+        {
             clearstatcache();
         }
 
@@ -868,7 +937,8 @@ class Filesystem extends AbstractAdapter implements
     public function replaceItems(array $keyValuePairs)
     {
         $options = $this->getOptions();
-        if ($options->getWritable() && $options->getClearStatCache()) {
+        if ($options->getWritable() && $options->getClearStatCache())
+        {
             clearstatcache();
         }
 
@@ -879,7 +949,7 @@ class Filesystem extends AbstractAdapter implements
      * Internal method to store an item.
      *
      * @param  string $normalizedKey
-     * @param  mixed  $value
+     * @param  mixed $value
      * @return bool
      * @throws Exception\ExceptionInterface
      */
@@ -896,7 +966,8 @@ class Filesystem extends AbstractAdapter implements
         $this->unlink($filespec . '.tag');
 
         // Retry writing data in blocking mode if it was blocked before
-        if ($wouldblock) {
+        if ($wouldblock)
+        {
             $this->putFileContent($filespec . '.dat', $value);
         }
 
@@ -912,11 +983,12 @@ class Filesystem extends AbstractAdapter implements
      */
     protected function internalSetItems(array & $normalizedKeyValuePairs)
     {
-        $oldUmask    = null;
+        $oldUmask = null;
 
         // create an associated array of files and contents to write
         $contents = array();
-        foreach ($normalizedKeyValuePairs as $key => & $value) {
+        foreach ($normalizedKeyValuePairs as $key => & $value)
+        {
             $filespec = $this->getFileSpec($key);
             $this->prepareDirectoryStructure($filespec);
 
@@ -928,13 +1000,16 @@ class Filesystem extends AbstractAdapter implements
         }
 
         // write to disk
-        while ($contents) {
+        while ($contents)
+        {
             $nonBlocking = count($contents) > 1;
             $wouldblock  = null;
 
-            foreach ($contents as $file => & $content) {
+            foreach ($contents as $file => & $content)
+            {
                 $this->putFileContent($file, $content, $nonBlocking, $wouldblock);
-                if (!$nonBlocking || !$wouldblock) {
+                if (!$nonBlocking || !$wouldblock)
+                {
                     unset($contents[$file]);
                 }
             }
@@ -950,9 +1025,9 @@ class Filesystem extends AbstractAdapter implements
      * It uses the token received from getItem() to check if the item has
      * changed before overwriting it.
      *
-     * @param  mixed  $token
+     * @param  mixed $token
      * @param  string $key
-     * @param  mixed  $value
+     * @param  mixed $value
      * @return bool
      * @throws Exception\ExceptionInterface
      * @see    getItem()
@@ -961,7 +1036,8 @@ class Filesystem extends AbstractAdapter implements
     public function checkAndSetItem($token, $key, $value)
     {
         $options = $this->getOptions();
-        if ($options->getWritable() && $options->getClearStatCache()) {
+        if ($options->getWritable() && $options->getClearStatCache())
+        {
             clearstatcache();
         }
 
@@ -971,9 +1047,9 @@ class Filesystem extends AbstractAdapter implements
     /**
      * Internal method to set an item only if token matches
      *
-     * @param  mixed  $token
+     * @param  mixed $token
      * @param  string $normalizedKey
-     * @param  mixed  $value
+     * @param  mixed $value
      * @return bool
      * @throws Exception\ExceptionInterface
      * @see    getItem()
@@ -981,14 +1057,16 @@ class Filesystem extends AbstractAdapter implements
      */
     protected function internalCheckAndSetItem(& $token, & $normalizedKey, & $value)
     {
-        if (!$this->internalHasItem($normalizedKey)) {
+        if (!$this->internalHasItem($normalizedKey))
+        {
             return false;
         }
 
         // use filemtime + filesize as CAS token
         $file  = $this->getFileSpec($normalizedKey) . '.dat';
         $check = filemtime($file) . filesize($file);
-        if ($token !== $check) {
+        if ($token !== $check)
+        {
             return false;
         }
 
@@ -1009,7 +1087,8 @@ class Filesystem extends AbstractAdapter implements
     public function touchItem($key)
     {
         $options = $this->getOptions();
-        if ($options->getWritable() && $options->getClearStatCache()) {
+        if ($options->getWritable() && $options->getClearStatCache())
+        {
             clearstatcache();
         }
 
@@ -1030,7 +1109,8 @@ class Filesystem extends AbstractAdapter implements
     public function touchItems(array $keys)
     {
         $options = $this->getOptions();
-        if ($options->getWritable() && $options->getClearStatCache()) {
+        if ($options->getWritable() && $options->getClearStatCache())
+        {
             clearstatcache();
         }
 
@@ -1046,7 +1126,8 @@ class Filesystem extends AbstractAdapter implements
      */
     protected function internalTouchItem(& $normalizedKey)
     {
-        if (!$this->internalHasItem($normalizedKey)) {
+        if (!$this->internalHasItem($normalizedKey))
+        {
             return false;
         }
 
@@ -1055,7 +1136,8 @@ class Filesystem extends AbstractAdapter implements
         ErrorHandler::start();
         $touch = touch($filespec . '.dat');
         $error = ErrorHandler::stop();
-        if (!$touch) {
+        if (!$touch)
+        {
             throw new Exception\RuntimeException(
                 "Error touching file '{$filespec}.dat'", 0, $error
             );
@@ -1078,7 +1160,8 @@ class Filesystem extends AbstractAdapter implements
     public function removeItem($key)
     {
         $options = $this->getOptions();
-        if ($options->getWritable() && $options->getClearStatCache()) {
+        if ($options->getWritable() && $options->getClearStatCache())
+        {
             clearstatcache();
         }
 
@@ -1099,7 +1182,8 @@ class Filesystem extends AbstractAdapter implements
     public function removeItems(array $keys)
     {
         $options = $this->getOptions();
-        if ($options->getWritable() && $options->getClearStatCache()) {
+        if ($options->getWritable() && $options->getClearStatCache())
+        {
             clearstatcache();
         }
 
@@ -1116,9 +1200,12 @@ class Filesystem extends AbstractAdapter implements
     protected function internalRemoveItem(& $normalizedKey)
     {
         $filespec = $this->getFileSpec($normalizedKey);
-        if (!file_exists($filespec . '.dat')) {
+        if (!file_exists($filespec . '.dat'))
+        {
             return false;
-        } else {
+        }
+        else
+        {
             $this->unlink($filespec . '.dat');
             $this->unlink($filespec . '.tag');
         }
@@ -1134,16 +1221,19 @@ class Filesystem extends AbstractAdapter implements
      */
     protected function internalGetCapabilities()
     {
-        if ($this->capabilities === null) {
+        if ($this->capabilities === null)
+        {
             $marker  = new stdClass();
             $options = $this->getOptions();
 
             // detect metadata
             $metadata = array('mtime', 'filespec');
-            if (!$options->getNoAtime()) {
+            if (!$options->getNoAtime())
+            {
                 $metadata[] = 'atime';
             }
-            if (!$options->getNoCtime()) {
+            if (!$options->getNoCtime())
+            {
                 $metadata[] = 'ctime';
             }
 
@@ -1152,53 +1242,64 @@ class Filesystem extends AbstractAdapter implements
                 $marker,
                 array(
                     'supportedDatatypes' => array(
-                        'NULL'     => 'string',
-                        'boolean'  => 'string',
-                        'integer'  => 'string',
-                        'double'   => 'string',
-                        'string'   => true,
-                        'array'    => false,
-                        'object'   => false,
+                        'NULL' => 'string',
+                        'boolean' => 'string',
+                        'integer' => 'string',
+                        'double' => 'string',
+                        'string' => true,
+                        'array' => false,
+                        'object' => false,
                         'resource' => false,
                     ),
-                    'supportedMetadata'  => $metadata,
-                    'minTtl'             => 1,
-                    'maxTtl'             => 0,
-                    'staticTtl'          => false,
-                    'ttlPrecision'       => 1,
-                    'expiredRead'        => true,
-                    'maxKeyLength'       => 251, // 255 - strlen(.dat | .tag)
-                    'namespaceIsPrefix'  => true,
+                    'supportedMetadata' => $metadata,
+                    'minTtl' => 1,
+                    'maxTtl' => 0,
+                    'staticTtl' => false,
+                    'ttlPrecision' => 1,
+                    'expiredRead' => true,
+                    'maxKeyLength' => 251, // 255 - strlen(.dat | .tag)
+                    'namespaceIsPrefix' => true,
                     'namespaceSeparator' => $options->getNamespaceSeparator(),
                 )
             );
 
             // update capabilities on change options
-            $this->getEventManager()->attach('option', function ($event) use ($capabilities, $marker) {
-                $params = $event->getParams();
+            $this->getEventManager()->attach(
+                'option', function ($event) use ($capabilities, $marker)
+                {
+                    $params = $event->getParams();
 
-                if (isset($params['namespace_separator'])) {
-                    $capabilities->setNamespaceSeparator($marker, $params['namespace_separator']);
-                }
-
-                if (isset($params['no_atime']) || isset($params['no_ctime'])) {
-                    $metadata = $capabilities->getSupportedMetadata();
-
-                    if (isset($params['no_atime']) && !$params['no_atime']) {
-                        $metadata[] = 'atime';
-                    } elseif (isset($params['no_atime']) && ($index = array_search('atime', $metadata)) !== false) {
-                        unset($metadata[$index]);
+                    if (isset($params['namespace_separator']))
+                    {
+                        $capabilities->setNamespaceSeparator($marker, $params['namespace_separator']);
                     }
 
-                    if (isset($params['no_ctime']) && !$params['no_ctime']) {
-                        $metadata[] = 'ctime';
-                    } elseif (isset($params['no_ctime']) && ($index = array_search('ctime', $metadata)) !== false) {
-                        unset($metadata[$index]);
-                    }
+                    if (isset($params['no_atime']) || isset($params['no_ctime']))
+                    {
+                        $metadata = $capabilities->getSupportedMetadata();
 
-                    $capabilities->setSupportedMetadata($marker, $metadata);
+                        if (isset($params['no_atime']) && !$params['no_atime'])
+                        {
+                            $metadata[] = 'atime';
+                        }
+                        elseif (isset($params['no_atime']) && ($index = array_search('atime', $metadata)) !== false)
+                        {
+                            unset($metadata[$index]);
+                        }
+
+                        if (isset($params['no_ctime']) && !$params['no_ctime'])
+                        {
+                            $metadata[] = 'ctime';
+                        }
+                        elseif (isset($params['no_ctime']) && ($index = array_search('ctime', $metadata)) !== false)
+                        {
+                            unset($metadata[$index]);
+                        }
+
+                        $capabilities->setSupportedMetadata($marker, $metadata);
+                    }
                 }
-            });
+            );
 
             $this->capabilityMarker = $marker;
             $this->capabilities     = $capabilities;
@@ -1212,30 +1313,35 @@ class Filesystem extends AbstractAdapter implements
     /**
      * Removes directories recursive by namespace
      *
-     * @param  string $dir    Directory to delete
+     * @param  string $dir Directory to delete
      * @param  string $prefix Namespace + Separator
      * @return bool
      */
     protected function rmDir($dir, $prefix)
     {
         $glob = glob(
-            $dir . DIRECTORY_SEPARATOR . $prefix  . '*',
+            $dir . DIRECTORY_SEPARATOR . $prefix . '*',
             GLOB_ONLYDIR | GLOB_NOESCAPE | GLOB_NOSORT
         );
-        if (!$glob) {
+        if (!$glob)
+        {
             // On some systems glob returns false even on empty result
             return true;
         }
 
         $ret = true;
-        foreach ($glob as $subdir) {
+        foreach ($glob as $subdir)
+        {
             // skip removing current directory if removing of sub-directory failed
-            if ($this->rmDir($subdir, $prefix)) {
+            if ($this->rmDir($subdir, $prefix))
+            {
                 // ignore not empty directories
                 ErrorHandler::start();
                 $ret = rmdir($subdir) && $ret;
                 ErrorHandler::stop();
-            } else {
+            }
+            else
+            {
                 $ret = false;
             }
         }
@@ -1258,12 +1364,15 @@ class Filesystem extends AbstractAdapter implements
         $level     = $options->getDirLevel();
 
         $fileSpecId = $path . $prefix . $normalizedKey . '/' . $level;
-        if ($this->lastFileSpecId !== $fileSpecId) {
-            if ($level > 0) {
+        if ($this->lastFileSpecId !== $fileSpecId)
+        {
+            if ($level > 0)
+            {
                 // create up to 256 directories per directory level
                 $hash = md5($normalizedKey);
-                for ($i = 0, $max = ($level * 2); $i < $max; $i+= 2) {
-                    $path .= $prefix . $hash[$i] . $hash[$i+1] . DIRECTORY_SEPARATOR;
+                for ($i = 0, $max = ($level * 2); $i < $max; $i += 2)
+                {
+                    $path .= $prefix . $hash[$i] . $hash[$i + 1] . DIRECTORY_SEPARATOR;
                 }
             }
 
@@ -1277,27 +1386,30 @@ class Filesystem extends AbstractAdapter implements
     /**
      * Read info file
      *
-     * @param  string  $file
+     * @param  string $file
      * @param  bool $nonBlocking Don't block script if file is locked
-     * @param  bool $wouldblock  The optional argument is set to TRUE if the lock would block
+     * @param  bool $wouldblock The optional argument is set to TRUE if the lock would block
      * @return array|bool The info array or false if file wasn't found
      * @throws Exception\RuntimeException
      */
     protected function readInfoFile($file, $nonBlocking = false, & $wouldblock = null)
     {
-        if (!file_exists($file)) {
+        if (!file_exists($file))
+        {
             return false;
         }
 
         $content = $this->getFileContent($file, $nonBlocking, $wouldblock);
-        if ($nonBlocking && $wouldblock) {
+        if ($nonBlocking && $wouldblock)
+        {
             return false;
         }
 
         ErrorHandler::start();
         $ifo = unserialize($content);
         $err = ErrorHandler::stop();
-        if (!is_array($ifo)) {
+        if (!is_array($ifo))
+        {
             throw new Exception\RuntimeException(
                 "Corrupted info file '{$file}'", 0, $err
             );
@@ -1309,9 +1421,9 @@ class Filesystem extends AbstractAdapter implements
     /**
      * Read a complete file
      *
-     * @param  string  $file        File complete path
+     * @param  string $file File complete path
      * @param  bool $nonBlocking Don't block script if file is locked
-     * @param  bool $wouldblock  The optional argument is set to TRUE if the lock would block
+     * @param  bool $wouldblock The optional argument is set to TRUE if the lock would block
      * @return string
      * @throws Exception\RuntimeException
      */
@@ -1323,27 +1435,34 @@ class Filesystem extends AbstractAdapter implements
         ErrorHandler::start();
 
         // if file locking enabled -> file_get_contents can't be used
-        if ($locking) {
+        if ($locking)
+        {
             $fp = fopen($file, 'rb');
-            if ($fp === false) {
+            if ($fp === false)
+            {
                 $err = ErrorHandler::stop();
                 throw new Exception\RuntimeException(
                     "Error opening file '{$file}'", 0, $err
                 );
             }
 
-            if ($nonBlocking) {
+            if ($nonBlocking)
+            {
                 $lock = flock($fp, LOCK_SH | LOCK_NB, $wouldblock);
-                if ($wouldblock) {
+                if ($wouldblock)
+                {
                     fclose($fp);
                     ErrorHandler::stop();
                     return;
                 }
-            } else {
+            }
+            else
+            {
                 $lock = flock($fp, LOCK_SH);
             }
 
-            if (!$lock) {
+            if (!$lock)
+            {
                 fclose($fp);
                 $err = ErrorHandler::stop();
                 throw new Exception\RuntimeException(
@@ -1352,7 +1471,8 @@ class Filesystem extends AbstractAdapter implements
             }
 
             $res = stream_get_contents($fp);
-            if ($res === false) {
+            if ($res === false)
+            {
                 flock($fp, LOCK_UN);
                 fclose($fp);
                 $err = ErrorHandler::stop();
@@ -1363,11 +1483,13 @@ class Filesystem extends AbstractAdapter implements
 
             flock($fp, LOCK_UN);
             fclose($fp);
-
-        // if file locking disabled -> file_get_contents can be used
-        } else {
+            // if file locking disabled -> file_get_contents can be used
+        }
+        else
+        {
             $res = file_get_contents($file, false);
-            if ($res === false) {
+            if ($res === false)
+            {
                 $err = ErrorHandler::stop();
                 throw new Exception\RuntimeException(
                     "Error getting file contents for file '{$file}'", 0, $err
@@ -1393,35 +1515,41 @@ class Filesystem extends AbstractAdapter implements
         $level   = $options->getDirLevel();
 
         // Directory structure is required only if directory level > 0
-        if (!$level) {
+        if (!$level)
+        {
             return;
         }
 
         // Directory structure already exists
         $pathname = dirname($file);
-        if (file_exists($pathname)) {
+        if (file_exists($pathname))
+        {
             return;
         }
 
-        $perm     = $options->getDirPermission();
-        $umask    = $options->getUmask();
-        if ($umask !== false && $perm !== false) {
+        $perm  = $options->getDirPermission();
+        $umask = $options->getUmask();
+        if ($umask !== false && $perm !== false)
+        {
             $perm = $perm & ~$umask;
         }
 
         ErrorHandler::start();
 
-        if ($perm === false || $level == 1) {
+        if ($perm === false || $level == 1)
+        {
             // build-in mkdir function is enough
 
             $umask = ($umask !== false) ? umask($umask) : false;
             $res   = mkdir($pathname, ($perm !== false) ? $perm : 0777, true);
 
-            if ($umask !== false) {
+            if ($umask !== false)
+            {
                 umask($umask);
             }
 
-            if (!$res) {
+            if (!$res)
+            {
                 $oct = ($perm === false) ? '777' : decoct($perm);
                 $err = ErrorHandler::stop();
                 throw new Exception\RuntimeException(
@@ -1429,15 +1557,17 @@ class Filesystem extends AbstractAdapter implements
                 );
             }
 
-            if ($perm !== false && !chmod($pathname, $perm)) {
+            if ($perm !== false && !chmod($pathname, $perm))
+            {
                 $oct = decoct($perm);
                 $err = ErrorHandler::stop();
                 throw new Exception\RuntimeException(
                     "chmod('{$pathname}', 0{$oct}) failed", 0, $err
                 );
             }
-
-        } else {
+        }
+        else
+        {
             // build-in mkdir function sets permission together with current umask
             // which doesn't work well on multo threaded webservers
             // -> create directories one by one and set permissions
@@ -1445,27 +1575,32 @@ class Filesystem extends AbstractAdapter implements
             // find existing path and missing path parts
             $parts = array();
             $path  = $pathname;
-            while (!file_exists($path)) {
+            while (!file_exists($path))
+            {
                 array_unshift($parts, basename($path));
                 $nextPath = dirname($path);
-                if ($nextPath === $path) {
+                if ($nextPath === $path)
+                {
                     break;
                 }
                 $path = $nextPath;
             }
 
             // make all missing path parts
-            foreach ($parts as $part) {
-                $path.= DIRECTORY_SEPARATOR . $part;
+            foreach ($parts as $part)
+            {
+                $path .= DIRECTORY_SEPARATOR . $part;
 
                 // create a single directory, set and reset umask immediately
                 $umask = ($umask !== false) ? umask($umask) : false;
                 $res   = mkdir($path, ($perm === false) ? 0777 : $perm, false);
-                if ($umask !== false) {
+                if ($umask !== false)
+                {
                     umask($umask);
                 }
 
-                if (!$res) {
+                if (!$res)
+                {
                     $oct = ($perm === false) ? '777' : decoct($perm);
                     $err = ErrorHandler::stop();
                     throw new Exception\RuntimeException(
@@ -1473,7 +1608,8 @@ class Filesystem extends AbstractAdapter implements
                     );
                 }
 
-                if ($perm !== false && !chmod($path, $perm)) {
+                if ($perm !== false && !chmod($path, $perm))
+                {
                     $oct = decoct($perm);
                     $err = ErrorHandler::stop();
                     throw new Exception\RuntimeException(
@@ -1489,10 +1625,10 @@ class Filesystem extends AbstractAdapter implements
     /**
      * Write content to a file
      *
-     * @param  string  $file        File complete path
-     * @param  string  $data        Data to write
+     * @param  string $file File complete path
+     * @param  string $data Data to write
      * @param  bool $nonBlocking Don't block script if file is locked
-     * @param  bool $wouldblock  The optional argument is set to TRUE if the lock would block
+     * @param  bool $wouldblock The optional argument is set to TRUE if the lock would block
      * @return void
      * @throws Exception\RuntimeException
      */
@@ -1505,55 +1641,66 @@ class Filesystem extends AbstractAdapter implements
 
         $umask = $options->getUmask();
         $perm  = $options->getFilePermission();
-        if ($umask !== false && $perm !== false) {
+        if ($umask !== false && $perm !== false)
+        {
             $perm = $perm & ~$umask;
         }
 
         ErrorHandler::start();
 
         // if locking and non blocking is enabled -> file_put_contents can't used
-        if ($locking && $nonBlocking) {
+        if ($locking && $nonBlocking)
+        {
 
             $umask = ($umask !== false) ? umask($umask) : false;
 
             $fp = fopen($file, 'cb');
 
-            if ($umask) {
+            if ($umask)
+            {
                 umask($umask);
             }
 
-            if (!$fp) {
+            if (!$fp)
+            {
                 $err = ErrorHandler::stop();
                 throw new Exception\RuntimeException(
                     "Error opening file '{$file}'", 0, $err
                 );
             }
 
-            if ($perm !== false && !chmod($file, $perm)) {
+            if ($perm !== false && !chmod($file, $perm))
+            {
                 fclose($fp);
                 $oct = decoct($perm);
                 $err = ErrorHandler::stop();
                 throw new Exception\RuntimeException("chmod('{$file}', 0{$oct}) failed", 0, $err);
             }
 
-            if (!flock($fp, LOCK_EX | LOCK_NB, $wouldblock)) {
+            if (!flock($fp, LOCK_EX | LOCK_NB, $wouldblock))
+            {
                 fclose($fp);
                 $err = ErrorHandler::stop();
-                if ($wouldblock) {
+                if ($wouldblock)
+                {
                     return;
-                } else {
+                }
+                else
+                {
                     throw new Exception\RuntimeException("Error locking file '{$file}'", 0, $err);
                 }
             }
 
-            if (fwrite($fp, $data) === false) {
+            if (fwrite($fp, $data) === false)
+            {
                 flock($fp, LOCK_UN);
                 fclose($fp);
                 $err = ErrorHandler::stop();
                 throw new Exception\RuntimeException("Error writing file '{$file}'", 0, $err);
             }
 
-            if (!ftruncate($fp, strlen($data))) {
+            if (!ftruncate($fp, strlen($data)))
+            {
                 flock($fp, LOCK_UN);
                 fclose($fp);
                 $err = ErrorHandler::stop();
@@ -1562,11 +1709,13 @@ class Filesystem extends AbstractAdapter implements
 
             flock($fp, LOCK_UN);
             fclose($fp);
-
-        // else -> file_put_contents can be used
-        } else {
+            // else -> file_put_contents can be used
+        }
+        else
+        {
             $flags = 0;
-            if ($locking) {
+            if ($locking)
+            {
                 $flags = $flags | LOCK_EX;
             }
 
@@ -1574,18 +1723,21 @@ class Filesystem extends AbstractAdapter implements
 
             $rs = file_put_contents($file, $data, $flags);
 
-            if ($umask) {
+            if ($umask)
+            {
                 umask($umask);
             }
 
-            if ($rs === false) {
+            if ($rs === false)
+            {
                 $err = ErrorHandler::stop();
                 throw new Exception\RuntimeException(
                     "Error writing file '{$file}'", 0, $err
                 );
             }
 
-            if ($perm !== false && !chmod($file, $perm)) {
+            if ($perm !== false && !chmod($file, $perm))
+            {
                 $oct = decoct($perm);
                 $err = ErrorHandler::stop();
                 throw new Exception\RuntimeException("chmod('{$file}', 0{$oct}) failed", 0, $err);
@@ -1609,7 +1761,8 @@ class Filesystem extends AbstractAdapter implements
         $err = ErrorHandler::stop();
 
         // only throw exception if file still exists after deleting
-        if (!$res && file_exists($file)) {
+        if (!$res && file_exists($file))
+        {
             throw new Exception\RuntimeException(
                 "Error unlinking file '{$file}'; file still exists", 0, $err
             );

@@ -28,7 +28,7 @@ class Cycle extends AbstractHelper implements Iterator
      *
      * @var array
      */
-    protected $data = array(self::DEFAULT_NAME=>array());
+    protected $data = array(self::DEFAULT_NAME => array());
 
     /**
      * Actual name of cycle
@@ -42,7 +42,7 @@ class Cycle extends AbstractHelper implements Iterator
      *
      * @var array
      */
-    protected $pointers = array(self::DEFAULT_NAME =>-1);
+    protected $pointers = array(self::DEFAULT_NAME => -1);
 
     /**
      * Add elements to alternate
@@ -53,8 +53,9 @@ class Cycle extends AbstractHelper implements Iterator
      */
     public function __invoke(array $data = array(), $name = self::DEFAULT_NAME)
     {
-        if (!empty($data)) {
-           $this->data[$name] = $data;
+        if (!empty($data))
+        {
+            $this->data[$name] = $data;
         }
 
         $this->setName($name);
@@ -78,7 +79,7 @@ class Cycle extends AbstractHelper implements Iterator
      */
     public function toString()
     {
-        return (string) $this->data[$this->name][$this->key()];
+        return (string)$this->data[$this->name][$this->key()];
     }
 
     /**
@@ -88,7 +89,7 @@ class Cycle extends AbstractHelper implements Iterator
      * @param  string $name
      * @return Cycle
      */
-    public function assign(Array $data , $name = self::DEFAULT_NAME)
+    public function assign(Array $data, $name = self::DEFAULT_NAME)
     {
         $this->setName($name);
         $this->data[$name] = $data;
@@ -104,17 +105,19 @@ class Cycle extends AbstractHelper implements Iterator
      */
     public function setName($name = self::DEFAULT_NAME)
     {
-       $this->name = $name;
+        $this->name = $name;
 
-       if (!isset($this->data[$this->name])) {
-           $this->data[$this->name] = array();
-       }
+        if (!isset($this->data[$this->name]))
+        {
+            $this->data[$this->name] = array();
+        }
 
-       if (!isset($this->pointers[$this->name])) {
-           $this->rewind();
-       }
+        if (!isset($this->pointers[$this->name]))
+        {
+            $this->rewind();
+        }
 
-       return $this;
+        return $this;
     }
 
     /**
@@ -147,9 +150,12 @@ class Cycle extends AbstractHelper implements Iterator
     {
         $count = count($this->data[$this->name]);
 
-        if ($this->pointers[$this->name] == ($count - 1)) {
+        if ($this->pointers[$this->name] == ($count - 1))
+        {
             $this->pointers[$this->name] = 0;
-        } else {
+        }
+        else
+        {
             $this->pointers[$this->name] = ++$this->pointers[$this->name];
         }
 
@@ -165,9 +171,12 @@ class Cycle extends AbstractHelper implements Iterator
     {
         $count = count($this->data[$this->name]);
 
-        if ($this->pointers[$this->name] <= 0) {
+        if ($this->pointers[$this->name] <= 0)
+        {
             $this->pointers[$this->name] = $count - 1;
-        } else {
+        }
+        else
+        {
             $this->pointers[$this->name] = --$this->pointers[$this->name];
         }
 
@@ -181,7 +190,8 @@ class Cycle extends AbstractHelper implements Iterator
      */
     public function key()
     {
-        if ($this->pointers[$this->name] < 0) {
+        if ($this->pointers[$this->name] < 0)
+        {
             return 0;
         }
 

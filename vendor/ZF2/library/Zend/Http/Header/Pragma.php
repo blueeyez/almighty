@@ -23,7 +23,8 @@ class Pragma implements HeaderInterface
         list($name, $value) = GenericHeader::splitHeaderLine($headerLine);
 
         // check to ensure proper header type for this factory
-        if (strtolower($name) !== 'pragma') {
+        if (strtolower($name) !== 'pragma')
+        {
             throw new Exception\InvalidArgumentException('Invalid header line for Pragma string: "' . $name . '"');
         }
 

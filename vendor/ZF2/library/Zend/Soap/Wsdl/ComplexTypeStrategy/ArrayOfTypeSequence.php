@@ -24,14 +24,16 @@ class ArrayOfTypeSequence extends DefaultComplexType
     {
         $nestedCounter = $this->_getNestedCount($type);
 
-        if ($nestedCounter > 0) {
+        if ($nestedCounter > 0)
+        {
             $singularType = $this->_getSingularType($type);
-            $complexType = '';
+            $complexType  = '';
 
-            for ($i = 1; $i <= $nestedCounter; $i++) {
+            for ($i = 1; $i <= $nestedCounter; $i++)
+            {
                 $complexType    = $this->_getTypeBasedOnNestingLevel($singularType, $i);
                 $complexTypePhp = $singularType . str_repeat('[]', $i);
-                $childType      = $this->_getTypeBasedOnNestingLevel($singularType, $i-1);
+                $childType      = $this->_getTypeBasedOnNestingLevel($singularType, $i - 1);
 
                 $this->_addSequenceType($complexType, $childType, $complexTypePhp);
             }
@@ -39,7 +41,8 @@ class ArrayOfTypeSequence extends DefaultComplexType
             return $complexType;
         }
 
-        if (($soapType = $this->scanRegisteredTypes($type)) !== null) {
+        if (($soapType = $this->scanRegisteredTypes($type)) !== null)
+        {
             // Existing complex type
             return $soapType;
         }
@@ -53,12 +56,13 @@ class ArrayOfTypeSequence extends DefaultComplexType
      * and the nesting level
      *
      * @param  string $singularType
-     * @param  int    $level
+     * @param  int $level
      * @return string
      */
     protected function _getTypeBasedOnNestingLevel($singularType, $level)
     {
-        if ($level == 0) {
+        if ($level == 0)
+        {
             // This is not an Array anymore, return the xsd simple type
             return $this->getContext()->getType($singularType);
         }
@@ -91,19 +95,19 @@ class ArrayOfTypeSequence extends DefaultComplexType
     /**
      * Append the complex type definition to the WSDL via the context access
      *
-     * @param  string $arrayType      Array type name (e.g. 'tns:ArrayOfArrayOfInt')
-     * @param  string $childType      Qualified array items type (e.g. 'xsd:int', 'tns:ArrayOfInt')
-     * @param  string $phpArrayType   PHP type (e.g. 'int[][]', '\MyNamespace\MyClassName[][][]')
+     * @param  string $arrayType Array type name (e.g. 'tns:ArrayOfArrayOfInt')
+     * @param  string $childType Qualified array items type (e.g. 'xsd:int', 'tns:ArrayOfInt')
+     * @param  string $phpArrayType PHP type (e.g. 'int[][]', '\MyNamespace\MyClassName[][][]')
      */
     protected function _addSequenceType($arrayType, $childType, $phpArrayType)
     {
-        if ($this->scanRegisteredTypes($phpArrayType) !== null) {
+        if ($this->scanRegisteredTypes($phpArrayType) !== null)
+        {
             return;
         }
 
         // Register type here to avoid recursion
         $this->getContext()->addType($phpArrayType, $arrayType);
-
 
         $dom = $this->getContext()->toDomDocument();
 

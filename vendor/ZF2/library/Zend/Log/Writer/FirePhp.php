@@ -33,19 +33,21 @@ class FirePhp extends AbstractWriter
      */
     public function __construct($instance = null)
     {
-        if ($instance instanceof Traversable) {
+        if ($instance instanceof Traversable)
+        {
             $instance = iterator_to_array($instance);
         }
 
-        if (is_array($instance)) {
+        if (is_array($instance))
+        {
             parent::__construct($instance);
             $instance = isset($instance['instance']) ? $instance['instance'] : null;
         }
 
-        if ($instance instanceof FirePhpInterface) {
+        if ($instance instanceof FirePhpInterface)
+        {
             throw new Exception\InvalidArgumentException('You must pass a valid FirePhp\FirePhpInterface');
         }
-
 
         $this->firephp   = $instance;
         $this->formatter = new FirePhpFormatter();
@@ -61,13 +63,15 @@ class FirePhp extends AbstractWriter
     {
         $firephp = $this->getFirePhp();
 
-        if (!$firephp->getEnabled()) {
+        if (!$firephp->getEnabled())
+        {
             return;
         }
 
         list($line, $label) = $this->formatter->format($event);
 
-        switch ($event['priority']) {
+        switch ($event['priority'])
+        {
             case Logger::EMERG:
             case Logger::ALERT:
             case Logger::CRIT:
@@ -100,7 +104,8 @@ class FirePhp extends AbstractWriter
     {
         if (!$this->firephp instanceof FirePhp\FirePhpInterface
             && !class_exists('FirePHP')
-        ) {
+        )
+        {
             // No FirePHP instance, and no way to create one
             throw new Exception\RuntimeException('FirePHP Class not found');
         }
@@ -109,7 +114,8 @@ class FirePhp extends AbstractWriter
         // here references the canonical name for the FirePHP class
         if (!$this->firephp instanceof FirePhp\FirePhpInterface
             && class_exists('FirePHP')
-        ) {
+        )
+        {
             // FirePHPService is an alias for FirePHP; otherwise the class
             // names would clash in this file on this line.
             $this->setFirePhp(new FirePhp\FirePhpBridge(new FirePHPService()));

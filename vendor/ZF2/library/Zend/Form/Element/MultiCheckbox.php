@@ -58,7 +58,8 @@ class MultiCheckbox extends Checkbox
         $this->valueOptions = $options;
 
         // Update Explode validator haystack
-        if ($this->validator instanceof ExplodeValidator) {
+        if ($this->validator instanceof ExplodeValidator)
+        {
             $validator = $this->validator->getValidator();
             $validator->setHaystack($this->getValueOptionsValues());
         }
@@ -80,11 +81,13 @@ class MultiCheckbox extends Checkbox
     {
         parent::setOptions($options);
 
-        if (isset($this->options['value_options'])) {
+        if (isset($this->options['value_options']))
+        {
             $this->setValueOptions($this->options['value_options']);
         }
         // Alias for 'value_options'
-        if (isset($this->options['options'])) {
+        if (isset($this->options['options']))
+        {
             $this->setValueOptions($this->options['options']);
         }
 
@@ -95,14 +98,15 @@ class MultiCheckbox extends Checkbox
      * Set a single element attribute
      *
      * @param  string $key
-     * @param  mixed  $value
+     * @param  mixed $value
      * @return MultiCheckbox|ElementInterface
      */
     public function setAttribute($key, $value)
     {
         // Do not include the options in the list of attributes
         // TODO: Deprecate this
-        if ($key === 'options') {
+        if ($key === 'options')
+        {
             $this->setValueOptions($value);
             return $this;
         }
@@ -116,13 +120,14 @@ class MultiCheckbox extends Checkbox
      */
     protected function getValidator()
     {
-        if (null === $this->validator) {
+        if (null === $this->validator)
+        {
             $inArrayValidator = new InArrayValidator(array(
-                'haystack'  => $this->getValueOptionsValues(),
-                'strict'    => false,
+                'haystack' => $this->getValueOptionsValues(),
+                'strict' => false,
             ));
-            $this->validator = new ExplodeValidator(array(
-                'validator'      => $inArrayValidator,
+            $this->validator  = new ExplodeValidator(array(
+                'validator' => $inArrayValidator,
                 'valueDelimiter' => null, // skip explode if only one value
             ));
         }
@@ -136,13 +141,15 @@ class MultiCheckbox extends Checkbox
      */
     protected function getValueOptionsValues()
     {
-        $values = array();
+        $values  = array();
         $options = $this->getValueOptions();
-        foreach ($options as $key => $optionSpec) {
-            $value = (is_array($optionSpec)) ? $optionSpec['value'] : $key;
+        foreach ($options as $key => $optionSpec)
+        {
+            $value    = (is_array($optionSpec)) ? $optionSpec['value'] : $key;
             $values[] = $value;
         }
-        if ($this->useHiddenElement()) {
+        if ($this->useHiddenElement())
+        {
             $values[] = $this->getUncheckedValue();
         }
         return $values;

@@ -49,7 +49,8 @@ class Smtp implements TransportInterface
      */
     public function __construct(SmtpOptions $options = null)
     {
-        if (!$options instanceof SmtpOptions) {
+        if (!$options instanceof SmtpOptions)
+        {
             $options = new SmtpOptions();
         }
         $this->setOptions($options);
@@ -97,7 +98,8 @@ class Smtp implements TransportInterface
      */
     public function getPluginManager()
     {
-        if (null === $this->plugins) {
+        if (null === $this->plugins)
+        {
             $this->setPluginManager(new Protocol\SmtpPluginManager());
         }
         return $this->plugins;
@@ -111,7 +113,7 @@ class Smtp implements TransportInterface
      */
     public function setAutoDisconnect($flag)
     {
-        $this->autoDisconnect = (bool) $flag;
+        $this->autoDisconnect = (bool)$flag;
         return $this;
     }
 
@@ -142,13 +144,18 @@ class Smtp implements TransportInterface
      */
     public function __destruct()
     {
-        if ($this->connection instanceof Protocol\Smtp) {
-            try {
+        if ($this->connection instanceof Protocol\Smtp)
+        {
+            try
+            {
                 $this->connection->quit();
-            } catch (ProtocolException\ExceptionInterface $e) {
+            }
+            catch (ProtocolException\ExceptionInterface $e)
+            {
                 // ignore
             }
-            if ($this->autoDisconnect) {
+            if ($this->autoDisconnect)
+            {
                 $this->connection->disconnect();
             }
         }
@@ -182,7 +189,8 @@ class Smtp implements TransportInterface
      */
     public function disconnect()
     {
-        if (!empty($this->connection) && ($this->connection instanceof Protocol\Smtp)) {
+        if (!empty($this->connection) && ($this->connection instanceof Protocol\Smtp))
+        {
             $this->connection->disconnect();
         }
     }
@@ -201,9 +209,12 @@ class Smtp implements TransportInterface
         // If sending multiple messages per session use existing adapter
         $connection = $this->getConnection();
 
-        if (!($connection instanceof Protocol\Smtp) || !$connection->hasSession()) {
+        if (!($connection instanceof Protocol\Smtp) || !$connection->hasSession())
+        {
             $connection = $this->connect();
-        } else {
+        }
+        else
+        {
             // Reset connection to ensure reliable transaction
             $connection->rset();
         }
@@ -214,8 +225,9 @@ class Smtp implements TransportInterface
         $headers    = $this->prepareHeaders($message);
         $body       = $this->prepareBody($message);
 
-        if ((count($recipients) == 0) && (!empty($headers) || !empty($body))) {
-            throw new Exception\RuntimeException(  // Per RFC 2821 3.3 (page 18)
+        if ((count($recipients) == 0) && (!empty($headers) || !empty($body)))
+        {
+            throw new Exception\RuntimeException( // Per RFC 2821 3.3 (page 18)
                 sprintf(
                     '%s transport expects at least one recipient if the message has at least one header or body',
                     __CLASS__
@@ -226,7 +238,8 @@ class Smtp implements TransportInterface
         $connection->mail($from);
 
         // Set recipient forward paths
-        foreach ($recipients as $recipient) {
+        foreach ($recipients as $recipient)
+        {
             $connection->rcpt($recipient);
         }
 
@@ -244,12 +257,14 @@ class Smtp implements TransportInterface
     protected function prepareFromAddress(Message $message)
     {
         $sender = $message->getSender();
-        if ($sender instanceof Address\AddressInterface) {
+        if ($sender instanceof Address\AddressInterface)
+        {
             return $sender->getEmail();
         }
 
         $from = $message->getFrom();
-        if (!count($from)) { // Per RFC 2822 3.6
+        if (!count($from))
+        { // Per RFC 2822 3.6
             throw new Exception\RuntimeException(sprintf(
                 '%s transport expects either a Sender or at least one From address in the Message; none provided',
                 __CLASS__
@@ -270,13 +285,16 @@ class Smtp implements TransportInterface
     protected function prepareRecipients(Message $message)
     {
         $recipients = array();
-        foreach ($message->getTo() as $address) {
+        foreach ($message->getTo() as $address)
+        {
             $recipients[] = $address->getEmail();
         }
-        foreach ($message->getCc() as $address) {
+        foreach ($message->getCc() as $address)
+        {
             $recipients[] = $address->getEmail();
         }
-        foreach ($message->getBcc() as $address) {
+        foreach ($message->getBcc() as $address)
+        {
             $recipients[] = $address->getEmail();
         }
         $recipients = array_unique($recipients);
@@ -332,7 +350,8 @@ class Smtp implements TransportInterface
      */
     protected function connect()
     {
-        if (!$this->connection instanceof Protocol\Smtp) {
+        if (!$this->connection instanceof Protocol\Smtp)
+        {
             return $this->lazyLoadConnection();
         }
 

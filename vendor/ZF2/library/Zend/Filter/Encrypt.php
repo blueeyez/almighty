@@ -29,7 +29,8 @@ class Encrypt extends AbstractFilter
      */
     public function __construct($options = null)
     {
-        if ($options instanceof Traversable) {
+        if ($options instanceof Traversable)
+        {
             $options = ArrayUtils::iteratorToArray($options);
         }
 
@@ -56,31 +57,42 @@ class Encrypt extends AbstractFilter
      */
     public function setAdapter($options = null)
     {
-        if (is_string($options)) {
+        if (is_string($options))
+        {
             $adapter = $options;
-        } elseif (isset($options['adapter'])) {
+        }
+        elseif (isset($options['adapter']))
+        {
             $adapter = $options['adapter'];
             unset($options['adapter']);
-        } else {
+        }
+        else
+        {
             $adapter = 'BlockCipher';
         }
 
-        if (!is_array($options)) {
+        if (!is_array($options))
+        {
             $options = array();
         }
 
-        if (class_exists('Zend\Filter\Encrypt\\' . ucfirst($adapter))) {
+        if (class_exists('Zend\Filter\Encrypt\\' . ucfirst($adapter)))
+        {
             $adapter = 'Zend\Filter\Encrypt\\' . ucfirst($adapter);
-        } elseif (!class_exists($adapter)) {
+        }
+        elseif (!class_exists($adapter))
+        {
             throw new Exception\DomainException(
-                sprintf('%s expects a valid registry class name; received "%s", which did not resolve',
+                sprintf(
+                    '%s expects a valid registry class name; received "%s", which did not resolve',
                     __METHOD__,
                     $adapter
-            ));
+                ));
         }
 
         $this->adapter = new $adapter($options);
-        if (!$this->adapter instanceof Encrypt\EncryptionAlgorithmInterface) {
+        if (!$this->adapter instanceof Encrypt\EncryptionAlgorithmInterface)
+        {
             throw new Exception\InvalidArgumentException(
                 "Encoding adapter '" . $adapter
                 . "' does not implement Zend\\Filter\\Encrypt\\EncryptionAlgorithmInterface");
@@ -92,7 +104,7 @@ class Encrypt extends AbstractFilter
     /**
      * Calls adapter methods
      *
-     * @param string       $method  Method to call
+     * @param string $method Method to call
      * @param string|array $options Options for this method
      * @return mixed
      * @throws Exception\BadMethodCallException
@@ -100,7 +112,8 @@ class Encrypt extends AbstractFilter
     public function __call($method, $options)
     {
         $part = substr($method, 0, 3);
-        if ((($part != 'get') && ($part != 'set')) || !method_exists($this->adapter, $method)) {
+        if ((($part != 'get') && ($part != 'set')) || !method_exists($this->adapter, $method))
+        {
             throw new Exception\BadMethodCallException("Unknown method '{$method}'");
         }
 

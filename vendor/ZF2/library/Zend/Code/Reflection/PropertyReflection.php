@@ -53,7 +53,8 @@ class PropertyReflection extends PhpReflectionProperty implements ReflectionInte
      */
     public function getDocBlock()
     {
-        if (!($docComment = $this->getDocComment())) {
+        if (!($docComment = $this->getDocComment()))
+        {
             return false;
         }
 
@@ -68,11 +69,13 @@ class PropertyReflection extends PhpReflectionProperty implements ReflectionInte
      */
     public function getAnnotations(AnnotationManager $annotationManager)
     {
-        if (null !== $this->annotations) {
+        if (null !== $this->annotations)
+        {
             return $this->annotations;
         }
 
-        if (($docComment = $this->getDocComment()) == '') {
+        if (($docComment = $this->getDocComment()) == '')
+        {
             return false;
         }
 
@@ -80,11 +83,12 @@ class PropertyReflection extends PhpReflectionProperty implements ReflectionInte
         $cachingFileScanner = $this->createFileScanner($class->getFileName());
         $nameInformation    = $cachingFileScanner->getClassNameInformation($class->getName());
 
-        if (!$nameInformation) {
+        if (!$nameInformation)
+        {
             return false;
         }
 
-        $this->annotations  = new AnnotationScanner($annotationManager, $docComment, $nameInformation);
+        $this->annotations = new AnnotationScanner($annotationManager, $docComment, $nameInformation);
 
         return $this->annotations;
     }

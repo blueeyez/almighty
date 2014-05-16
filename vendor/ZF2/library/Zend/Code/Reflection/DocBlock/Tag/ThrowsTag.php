@@ -40,7 +40,8 @@ class ThrowsTag implements TagInterface, PhpDocTypedTagInterface
 
         $this->types = explode('|', $matches[1]);
 
-        if (isset($matches[2])) {
+        if (isset($matches[2]))
+        {
             $this->description = $matches[2];
         }
     }

@@ -23,7 +23,8 @@ class Refresh implements HeaderInterface
         list($name, $value) = GenericHeader::splitHeaderLine($headerLine);
 
         // check to ensure proper header type for this factory
-        if (strtolower($name) !== 'refresh') {
+        if (strtolower($name) !== 'refresh')
+        {
             throw new Exception\InvalidArgumentException('Invalid header line for Refresh string: "' . $name . '"');
         }
 

@@ -41,13 +41,17 @@ class ServerIntrospection
     {
         $methods = $this->listMethods();
 
-        try {
+        try
+        {
             $signatures = $this->getSignatureForEachMethodByMulticall($methods);
-        } catch (Exception\FaultException $e) {
+        }
+        catch (Exception\FaultException $e)
+        {
             // degrade to looping
         }
 
-        if (empty($signatures)) {
+        if (empty($signatures))
+        {
             $signatures = $this->getSignatureForEachMethodByLooping($methods);
         }
 
@@ -65,32 +69,39 @@ class ServerIntrospection
      */
     public function getSignatureForEachMethodByMulticall($methods = null)
     {
-        if ($methods === null) {
+        if ($methods === null)
+        {
             $methods = $this->listMethods();
         }
 
         $multicallParams = array();
-        foreach ($methods as $method) {
-            $multicallParams[] = array('methodName' => 'system.methodSignature',
-                                       'params'     => array($method));
+        foreach ($methods as $method)
+        {
+            $multicallParams[] = array(
+                'methodName' => 'system.methodSignature',
+                'params' => array($method)
+            );
         }
 
         $serverSignatures = $this->system->multicall($multicallParams);
 
-        if (! is_array($serverSignatures)) {
-            $type = gettype($serverSignatures);
+        if (!is_array($serverSignatures))
+        {
+            $type  = gettype($serverSignatures);
             $error = "Multicall return is malformed.  Expected array, got $type";
             throw new Exception\IntrospectException($error);
         }
 
-        if (count($serverSignatures) != count($methods)) {
+        if (count($serverSignatures) != count($methods))
+        {
             $error = 'Bad number of signatures received from multicall';
             throw new Exception\IntrospectException($error);
         }
 
         // Create a new signatures array with the methods name as keys and the signature as value
         $signatures = array();
-        foreach ($serverSignatures as $i => $signature) {
+        foreach ($serverSignatures as $i => $signature)
+        {
             $signatures[$methods[$i]] = $signature;
         }
 
@@ -106,12 +117,14 @@ class ServerIntrospection
      */
     public function getSignatureForEachMethodByLooping($methods = null)
     {
-        if ($methods === null) {
+        if ($methods === null)
+        {
             $methods = $this->listMethods();
         }
 
         $signatures = array();
-        foreach ($methods as $method) {
+        foreach ($methods as $method)
+        {
             $signatures[$method] = $this->getMethodSignature($method);
         }
 
@@ -121,14 +134,15 @@ class ServerIntrospection
     /**
      * Call system.methodSignature() for the given method
      *
-     * @param  array  $method
+     * @param  array $method
      * @throws Exception\IntrospectException
      * @return array  array(array(return, param, param, param...))
      */
     public function getMethodSignature($method)
     {
         $signature = $this->system->methodSignature($method);
-        if (!is_array($signature)) {
+        if (!is_array($signature))
+        {
             $error = 'Invalid signature for method "' . $method . '"';
             throw new Exception\IntrospectException($error);
         }

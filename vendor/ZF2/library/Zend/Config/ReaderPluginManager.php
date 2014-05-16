@@ -19,9 +19,9 @@ class ReaderPluginManager extends AbstractPluginManager
      * @var array
      */
     protected $invokableClasses = array(
-        'ini'  => 'Zend\Config\Reader\Ini',
+        'ini' => 'Zend\Config\Reader\Ini',
         'json' => 'Zend\Config\Reader\Json',
-        'xml'  => 'Zend\Config\Reader\Xml',
+        'xml' => 'Zend\Config\Reader\Xml',
         'yaml' => 'Zend\Config\Reader\Yaml',
     );
 
@@ -35,7 +35,8 @@ class ReaderPluginManager extends AbstractPluginManager
      */
     public function validatePlugin($plugin)
     {
-        if ($plugin instanceof Reader\ReaderInterface) {
+        if ($plugin instanceof Reader\ReaderInterface)
+        {
             // we're okay
             return;
         }

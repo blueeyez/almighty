@@ -37,7 +37,7 @@ class Scheme implements RouteInterface
      * Create a new scheme route.
      *
      * @param  string $scheme
-     * @param  array  $defaults
+     * @param  array $defaults
      */
     public function __construct($scheme, array $defaults = array())
     {
@@ -55,17 +55,22 @@ class Scheme implements RouteInterface
      */
     public static function factory($options = array())
     {
-        if ($options instanceof Traversable) {
+        if ($options instanceof Traversable)
+        {
             $options = ArrayUtils::iteratorToArray($options);
-        } elseif (!is_array($options)) {
+        }
+        elseif (!is_array($options))
+        {
             throw new Exception\InvalidArgumentException(__METHOD__ . ' expects an array or Traversable set of options');
         }
 
-        if (!isset($options['scheme'])) {
+        if (!isset($options['scheme']))
+        {
             throw new Exception\InvalidArgumentException('Missing "scheme" in options array');
         }
 
-        if (!isset($options['defaults'])) {
+        if (!isset($options['defaults']))
+        {
             $options['defaults'] = array();
         }
 
@@ -81,14 +86,16 @@ class Scheme implements RouteInterface
      */
     public function match(Request $request)
     {
-        if (!method_exists($request, 'getUri')) {
+        if (!method_exists($request, 'getUri'))
+        {
             return null;
         }
 
         $uri    = $request->getUri();
         $scheme = $uri->getScheme();
 
-        if ($scheme !== $this->scheme) {
+        if ($scheme !== $this->scheme)
+        {
             return null;
         }
 
@@ -105,7 +112,8 @@ class Scheme implements RouteInterface
      */
     public function assemble(array $params = array(), array $options = array())
     {
-        if (isset($options['uri'])) {
+        if (isset($options['uri']))
+        {
             $options['uri']->setScheme($this->scheme);
         }
 

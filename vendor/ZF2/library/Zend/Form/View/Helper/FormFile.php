@@ -20,15 +20,15 @@ class FormFile extends FormInput
      * @var array
      */
     protected $validTagAttributes = array(
-        'name'           => true,
-        'accept'         => true,
-        'autofocus'      => true,
-        'disabled'       => true,
-        'form'           => true,
-        'multiple'       => true,
-        'required'       => true,
-        'type'           => true,
-        'value'          => true,
+        'name' => true,
+        'accept' => true,
+        'autofocus' => true,
+        'disabled' => true,
+        'form' => true,
+        'multiple' => true,
+        'required' => true,
+        'type' => true,
+        'value' => true,
     );
 
     /**
@@ -41,24 +41,29 @@ class FormFile extends FormInput
     public function render(ElementInterface $element)
     {
         $name = $element->getName();
-        if ($name === null || $name === '') {
+        if ($name === null || $name === '')
+        {
             throw new Exception\DomainException(sprintf(
                 '%s requires that the element has an assigned name; none discovered',
                 __METHOD__
             ));
         }
 
-        $attributes          = $element->getAttributes();
-        $attributes['type']  = $this->getType($element);
-        $attributes['name']  = $name;
-        if (array_key_exists('multiple', $attributes) && $attributes['multiple']) {
+        $attributes         = $element->getAttributes();
+        $attributes['type'] = $this->getType($element);
+        $attributes['name'] = $name;
+        if (array_key_exists('multiple', $attributes) && $attributes['multiple'])
+        {
             $attributes['name'] .= '[]';
         }
 
         $value = $element->getValue();
-        if (is_array($value) && isset($value['name']) && !is_array($value['name'])) {
+        if (is_array($value) && isset($value['name']) && !is_array($value['name']))
+        {
             $attributes['value'] = $value['name'];
-        } elseif (is_string($value)) {
+        }
+        elseif (is_string($value))
+        {
             $attributes['value'] = $value;
         }
 

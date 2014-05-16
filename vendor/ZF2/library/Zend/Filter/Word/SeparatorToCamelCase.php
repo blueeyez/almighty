@@ -24,47 +24,60 @@ class SeparatorToCamelCase extends AbstractSeparator
         // a unicode safe way of converting characters to \x00\x00 notation
         $pregQuotedSeparator = preg_quote($this->separator, '#');
 
-        if (StringUtils::hasPcreUnicodeSupport()) {
+        if (StringUtils::hasPcreUnicodeSupport())
+        {
             $patterns = array(
-                '#(' . $pregQuotedSeparator.')(\p{L}{1})#u',
+                '#(' . $pregQuotedSeparator . ')(\p{L}{1})#u',
                 '#(^\p{Ll}{1})#u',
             );
-            if (!extension_loaded('mbstring')) {
+            if (!extension_loaded('mbstring'))
+            {
                 $replacements = array(
-                    function ($matches) {
+                    function ($matches)
+                    {
                         return strtoupper($matches[2]);
                     },
-                    function ($matches) {
+                    function ($matches)
+                    {
                         return strtoupper($matches[1]);
                     },
                 );
-            } else {
+            }
+            else
+            {
                 $replacements = array(
-                    function ($matches) {
+                    function ($matches)
+                    {
                         return mb_strtoupper($matches[2], 'UTF-8');
                     },
-                    function ($matches) {
+                    function ($matches)
+                    {
                         return mb_strtoupper($matches[1], 'UTF-8');
                     },
                 );
             }
-        } else {
-            $patterns = array(
-                '#(' . $pregQuotedSeparator.')([A-Za-z]{1})#',
+        }
+        else
+        {
+            $patterns     = array(
+                '#(' . $pregQuotedSeparator . ')([A-Za-z]{1})#',
                 '#(^[A-Za-z]{1})#',
             );
             $replacements = array(
-                function ($matches) {
+                function ($matches)
+                {
                     return strtoupper($matches[2]);
                 },
-                function ($matches) {
+                function ($matches)
+                {
                     return strtoupper($matches[1]);
                 },
             );
         }
 
         $filtered = $value;
-        foreach ($patterns as $index => $pattern) {
+        foreach ($patterns as $index => $pattern)
+        {
             $filtered = preg_replace_callback($pattern, $replacements[$index], $filtered);
         }
         return $filtered;

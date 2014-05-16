@@ -31,7 +31,8 @@ class OutputCache extends AbstractPattern
     {
         parent::setOptions($options);
 
-        if (!$options->getStorage()) {
+        if (!$options->getStorage())
+        {
             throw new Exception\InvalidArgumentException("Missing option 'storage'");
         }
 
@@ -42,19 +43,21 @@ class OutputCache extends AbstractPattern
      * if there is a cached item with the given key display it's data and return true
      * else start buffering output until end() is called or the script ends.
      *
-     * @param  string  $key Key
+     * @param  string $key Key
      * @throws Exception\MissingKeyException if key is missing
      * @return bool
      */
     public function start($key)
     {
-        if (($key = (string) $key) === '') {
+        if (($key = (string)$key) === '')
+        {
             throw new Exception\MissingKeyException('Missing key to read/write output from cache');
         }
 
         $success = null;
         $data    = $this->getOptions()->getStorage()->getItem($key, $success);
-        if ($success) {
+        if ($success)
+        {
             echo $data;
             return true;
         }
@@ -75,12 +78,14 @@ class OutputCache extends AbstractPattern
     public function end()
     {
         $key = array_pop($this->keyStack);
-        if ($key === null) {
+        if ($key === null)
+        {
             throw new Exception\RuntimeException('Output cache not started');
         }
 
         $output = ob_get_flush();
-        if ($output === false) {
+        if ($output === false)
+        {
             throw new Exception\RuntimeException('Output buffering not active');
         }
 

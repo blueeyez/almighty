@@ -29,9 +29,12 @@ class Ean8 extends AbstractAdapter
      */
     public function hasValidLength($value)
     {
-        if (strlen($value) == 7) {
+        if (strlen($value) == 7)
+        {
             $this->useChecksum(false);
-        } else {
+        }
+        else
+        {
             $this->useChecksum(true);
         }
 

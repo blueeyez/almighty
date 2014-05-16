@@ -21,12 +21,14 @@ class ExceptionStrategy extends AbstractListenerAggregate
 {
     /**
      * Display exceptions?
+     *
      * @var bool
      */
     protected $displayExceptions = false;
 
     /**
      * Name of exception template
+     *
      * @var string
      */
     protected $exceptionTemplate = 'error';
@@ -48,7 +50,7 @@ class ExceptionStrategy extends AbstractListenerAggregate
      */
     public function setDisplayExceptions($displayExceptions)
     {
-        $this->displayExceptions = (bool) $displayExceptions;
+        $this->displayExceptions = (bool)$displayExceptions;
         return $this;
     }
 
@@ -70,7 +72,7 @@ class ExceptionStrategy extends AbstractListenerAggregate
      */
     public function setExceptionTemplate($exceptionTemplate)
     {
-        $this->exceptionTemplate = (string) $exceptionTemplate;
+        $this->exceptionTemplate = (string)$exceptionTemplate;
         return $this;
     }
 
@@ -99,17 +101,20 @@ class ExceptionStrategy extends AbstractListenerAggregate
     {
         // Do nothing if no error in the event
         $error = $e->getError();
-        if (empty($error)) {
+        if (empty($error))
+        {
             return;
         }
 
         // Do nothing if the result is a response object
         $result = $e->getResult();
-        if ($result instanceof Response) {
+        if ($result instanceof Response)
+        {
             return;
         }
 
-        switch ($error) {
+        switch ($error)
+        {
             case Application::ERROR_CONTROLLER_NOT_FOUND:
             case Application::ERROR_CONTROLLER_INVALID:
             case Application::ERROR_ROUTER_NO_MATCH:
@@ -119,21 +124,25 @@ class ExceptionStrategy extends AbstractListenerAggregate
             case Application::ERROR_EXCEPTION:
             default:
                 $model = new ViewModel(array(
-                    'message'            => 'An error occurred during execution; please try again later.',
-                    'exception'          => $e->getParam('exception'),
+                    'message' => 'An error occurred during execution; please try again later.',
+                    'exception' => $e->getParam('exception'),
                     'display_exceptions' => $this->displayExceptions(),
                 ));
                 $model->setTemplate($this->getExceptionTemplate());
                 $e->setResult($model);
 
                 $response = $e->getResponse();
-                if (!$response) {
+                if (!$response)
+                {
                     $response = new HttpResponse();
                     $response->setStatusCode(500);
                     $e->setResponse($response);
-                } else {
+                }
+                else
+                {
                     $statusCode = $response->getStatusCode();
-                    if ($statusCode === 200) {
+                    if ($statusCode === 200)
+                    {
                         $response->setStatusCode(500);
                     }
                 }

@@ -25,16 +25,16 @@ class Request extends AbstractMessage implements RequestInterface
     /**#@+
      * @const string METHOD constant names
      */
-    const METHOD_OPTIONS = 'OPTIONS';
-    const METHOD_GET     = 'GET';
-    const METHOD_HEAD    = 'HEAD';
-    const METHOD_POST    = 'POST';
-    const METHOD_PUT     = 'PUT';
-    const METHOD_DELETE  = 'DELETE';
-    const METHOD_TRACE   = 'TRACE';
-    const METHOD_CONNECT = 'CONNECT';
-    const METHOD_PATCH   = 'PATCH';
-    const METHOD_PROPFIND= 'PROPFIND';
+    const METHOD_OPTIONS  = 'OPTIONS';
+    const METHOD_GET      = 'GET';
+    const METHOD_HEAD     = 'HEAD';
+    const METHOD_POST     = 'POST';
+    const METHOD_PUT      = 'PUT';
+    const METHOD_DELETE   = 'DELETE';
+    const METHOD_TRACE    = 'TRACE';
+    const METHOD_CONNECT  = 'CONNECT';
+    const METHOD_PATCH    = 'PATCH';
+    const METHOD_PROPFIND = 'PROPFIND';
     /**#@-*/
 
     /**
@@ -76,15 +76,24 @@ class Request extends AbstractMessage implements RequestInterface
         $lines = explode("\r\n", $string);
 
         // first line must be Method/Uri/Version string
-        $matches = null;
-        $methods = implode('|', array(
-            self::METHOD_OPTIONS, self::METHOD_GET, self::METHOD_HEAD, self::METHOD_POST,
-            self::METHOD_PUT, self::METHOD_DELETE, self::METHOD_TRACE, self::METHOD_CONNECT,
-            self::METHOD_PATCH
-        ));
+        $matches   = null;
+        $methods   = implode(
+            '|', array(
+                self::METHOD_OPTIONS,
+                self::METHOD_GET,
+                self::METHOD_HEAD,
+                self::METHOD_POST,
+                self::METHOD_PUT,
+                self::METHOD_DELETE,
+                self::METHOD_TRACE,
+                self::METHOD_CONNECT,
+                self::METHOD_PATCH
+            )
+        );
         $regex     = '#^(?P<method>' . $methods . ')\s(?P<uri>[^ ]*)(?:\sHTTP\/(?P<version>\d+\.\d+)){0,1}#';
         $firstLine = array_shift($lines);
-        if (!preg_match($regex, $firstLine, $matches)) {
+        if (!preg_match($regex, $firstLine, $matches))
+        {
             throw new Exception\InvalidArgumentException(
                 'A valid request line was not found in the provided string'
             );
@@ -93,34 +102,43 @@ class Request extends AbstractMessage implements RequestInterface
         $request->setMethod($matches['method']);
         $request->setUri($matches['uri']);
 
-        if (isset($matches['version'])) {
+        if (isset($matches['version']))
+        {
             $request->setVersion($matches['version']);
         }
 
-        if (count($lines) == 0) {
+        if (count($lines) == 0)
+        {
             return $request;
         }
 
         $isHeader = true;
-        $headers = $rawBody = array();
-        while ($lines) {
+        $headers  = $rawBody = array();
+        while ($lines)
+        {
             $nextLine = array_shift($lines);
-            if ($nextLine == '') {
+            if ($nextLine == '')
+            {
                 $isHeader = false;
                 continue;
             }
-            if ($isHeader) {
+            if ($isHeader)
+            {
                 $headers[] = $nextLine;
-            } else {
+            }
+            else
+            {
                 $rawBody[] = $nextLine;
             }
         }
 
-        if ($headers) {
+        if ($headers)
+        {
             $request->headers = implode("\r\n", $headers);
         }
 
-        if ($rawBody) {
+        if ($rawBody)
+        {
             $request->setContent(implode("\r\n", $rawBody));
         }
 
@@ -137,7 +155,8 @@ class Request extends AbstractMessage implements RequestInterface
     public function setMethod($method)
     {
         $method = strtoupper($method);
-        if (!defined('static::METHOD_' . $method)) {
+        if (!defined('static::METHOD_' . $method))
+        {
             throw new Exception\InvalidArgumentException('Invalid HTTP method passed');
         }
         $this->method = $method;
@@ -163,17 +182,23 @@ class Request extends AbstractMessage implements RequestInterface
      */
     public function setUri($uri)
     {
-        if (is_string($uri)) {
-            try {
+        if (is_string($uri))
+        {
+            try
+            {
                 $uri = new HttpUri($uri);
-            } catch (UriException\InvalidUriPartException $e) {
+            }
+            catch (UriException\InvalidUriPartException $e)
+            {
                 throw new Exception\InvalidArgumentException(
-                    sprintf('Invalid URI passed as string (%s)', (string) $uri),
+                    sprintf('Invalid URI passed as string (%s)', (string)$uri),
                     $e->getCode(),
                     $e
                 );
             }
-        } elseif (!($uri instanceof HttpUri)) {
+        }
+        elseif (!($uri instanceof HttpUri))
+        {
             throw new Exception\InvalidArgumentException(
                 'URI must be an instance of Zend\Uri\Http or a string'
             );
@@ -190,7 +215,8 @@ class Request extends AbstractMessage implements RequestInterface
      */
     public function getUri()
     {
-        if ($this->uri === null || is_string($this->uri)) {
+        if ($this->uri === null || is_string($this->uri))
+        {
             $this->uri = new HttpUri($this->uri);
         }
         return $this->uri;
@@ -203,7 +229,8 @@ class Request extends AbstractMessage implements RequestInterface
      */
     public function getUriString()
     {
-        if ($this->uri instanceof HttpUri) {
+        if ($this->uri instanceof HttpUri)
+        {
             return $this->uri->toString();
         }
         return $this->uri;
@@ -225,17 +252,19 @@ class Request extends AbstractMessage implements RequestInterface
     /**
      * Return the parameter container responsible for query parameters or a single query parameter
      *
-     * @param string|null           $name            Parameter name to retrieve, or null to get the whole container.
-     * @param mixed|null            $default         Default value to use when the parameter is missing.
+     * @param string|null $name Parameter name to retrieve, or null to get the whole container.
+     * @param mixed|null $default Default value to use when the parameter is missing.
      * @return \Zend\Stdlib\ParametersInterface|mixed
      */
     public function getQuery($name = null, $default = null)
     {
-        if ($this->queryParams === null) {
+        if ($this->queryParams === null)
+        {
             $this->queryParams = new Parameters();
         }
 
-        if ($name === null) {
+        if ($name === null)
+        {
             return $this->queryParams;
         }
 
@@ -258,17 +287,19 @@ class Request extends AbstractMessage implements RequestInterface
     /**
      * Return the parameter container responsible for post parameters or a single post parameter.
      *
-     * @param string|null           $name            Parameter name to retrieve, or null to get the whole container.
-     * @param mixed|null            $default         Default value to use when the parameter is missing.
+     * @param string|null $name Parameter name to retrieve, or null to get the whole container.
+     * @param mixed|null $default Default value to use when the parameter is missing.
      * @return \Zend\Stdlib\ParametersInterface|mixed
      */
     public function getPost($name = null, $default = null)
     {
-        if ($this->postParams === null) {
+        if ($this->postParams === null)
+        {
             $this->postParams = new Parameters();
         }
 
-        if ($name === null) {
+        if ($name === null)
+        {
             return $this->postParams;
         }
 
@@ -302,17 +333,19 @@ class Request extends AbstractMessage implements RequestInterface
     /**
      * Return the parameter container responsible for file parameters or a single file.
      *
-     * @param string|null           $name            Parameter name to retrieve, or null to get the whole container.
-     * @param mixed|null            $default         Default value to use when the parameter is missing.
+     * @param string|null $name Parameter name to retrieve, or null to get the whole container.
+     * @param mixed|null $default Default value to use when the parameter is missing.
      * @return ParametersInterface|mixed
      */
     public function getFiles($name = null, $default = null)
     {
-        if ($this->fileParams === null) {
+        if ($this->fileParams === null)
+        {
             $this->fileParams = new Parameters();
         }
 
-        if ($name === null) {
+        if ($name === null)
+        {
             return $this->fileParams;
         }
 
@@ -323,22 +356,25 @@ class Request extends AbstractMessage implements RequestInterface
      * Return the header container responsible for headers or all headers of a certain name/type
      *
      * @see \Zend\Http\Headers::get()
-     * @param string|null           $name            Header name to retrieve, or null to get the whole container.
-     * @param mixed|null            $default         Default value to use when the requested header is missing.
+     * @param string|null $name Header name to retrieve, or null to get the whole container.
+     * @param mixed|null $default Default value to use when the requested header is missing.
      * @return \Zend\Http\Headers|bool|\Zend\Http\Header\HeaderInterface|\ArrayIterator
      */
     public function getHeaders($name = null, $default = false)
     {
-        if ($this->headers === null || is_string($this->headers)) {
+        if ($this->headers === null || is_string($this->headers))
+        {
             // this is only here for fromString lazy loading
             $this->headers = (is_string($this->headers)) ? Headers::fromString($this->headers) : new Headers();
         }
 
-        if ($name === null) {
+        if ($name === null)
+        {
             return $this->headers;
         }
 
-        if ($this->headers->has($name)) {
+        if ($this->headers->has($name))
+        {
             return $this->headers->get($name);
         }
 
@@ -349,8 +385,8 @@ class Request extends AbstractMessage implements RequestInterface
      * Get all headers of a certain name/type.
      *
      * @see Request::getHeaders()
-     * @param string|null           $name            Header name to retrieve, or null to get the whole container.
-     * @param mixed|null            $default         Default value to use when the requested header is missing.
+     * @param string|null $name Header name to retrieve, or null to get the whole container.
+     * @param mixed|null $default Default value to use when the requested header is missing.
      * @return \Zend\Http\Headers|bool|\Zend\Http\Header\HeaderInterface|\ArrayIterator
      */
     public function getHeader($name, $default = false)
@@ -489,7 +525,7 @@ class Request extends AbstractMessage implements RequestInterface
      */
     public function renderRequestLine()
     {
-        return $this->method . ' ' . (string) $this->uri . ' HTTP/' . $this->version;
+        return $this->method . ' ' . (string)$this->uri . ' HTTP/' . $this->version;
     }
 
     /**

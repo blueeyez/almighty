@@ -36,7 +36,8 @@ class SplPriorityQueue extends \SplPriorityQueue implements Serializable
      */
     public function insert($datum, $priority)
     {
-        if (!is_array($priority)) {
+        if (!is_array($priority))
+        {
             $priority = array($priority, $this->serial--);
         }
         parent::insert($datum, $priority);
@@ -53,7 +54,8 @@ class SplPriorityQueue extends \SplPriorityQueue implements Serializable
     public function toArray()
     {
         $array = array();
-        foreach (clone $this as $item) {
+        foreach (clone $this as $item)
+        {
             $array[] = $item;
         }
         return $array;
@@ -71,7 +73,8 @@ class SplPriorityQueue extends \SplPriorityQueue implements Serializable
         $clone->setExtractFlags(self::EXTR_BOTH);
 
         $data = array();
-        foreach ($clone as $item) {
+        foreach ($clone as $item)
+        {
             $data[] = $item;
         }
 
@@ -86,7 +89,8 @@ class SplPriorityQueue extends \SplPriorityQueue implements Serializable
      */
     public function unserialize($data)
     {
-        foreach (unserialize($data) as $item) {
+        foreach (unserialize($data) as $item)
+        {
             $this->insert($item['data'], $item['priority']);
         }
     }

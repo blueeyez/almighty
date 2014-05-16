@@ -32,17 +32,22 @@ class ClassFileLocator extends FilterIterator
      */
     public function __construct($dirOrIterator = '.')
     {
-        if (is_string($dirOrIterator)) {
-            if (!is_dir($dirOrIterator)) {
+        if (is_string($dirOrIterator))
+        {
+            if (!is_dir($dirOrIterator))
+            {
                 throw new Exception\InvalidArgumentException('Expected a valid directory name');
             }
 
             $dirOrIterator = new RecursiveDirectoryIterator($dirOrIterator, RecursiveDirectoryIterator::FOLLOW_SYMLINKS);
-        } elseif (!$dirOrIterator instanceof DirectoryIterator) {
+        }
+        elseif (!$dirOrIterator instanceof DirectoryIterator)
+        {
             throw new Exception\InvalidArgumentException('Expected a DirectoryIterator');
         }
 
-        if ($dirOrIterator instanceof RecursiveIterator) {
+        if ($dirOrIterator instanceof RecursiveIterator)
+        {
             $dirOrIterator = new RecursiveIteratorIterator($dirOrIterator);
         }
 
@@ -60,17 +65,20 @@ class ClassFileLocator extends FilterIterator
         $file = $this->getInnerIterator()->current();
         // If we somehow have something other than an SplFileInfo object, just
         // return false
-        if (!$file instanceof SplFileInfo) {
+        if (!$file instanceof SplFileInfo)
+        {
             return false;
         }
 
         // If we have a directory, it's not a file, so return false
-        if (!$file->isFile()) {
+        if (!$file->isFile())
+        {
             return false;
         }
 
         // If not a PHP file, skip
-        if ($file->getBasename('.php') == $file->getBasename()) {
+        if ($file->getBasename('.php') == $file->getBasename())
+        {
             return false;
         }
 
@@ -78,39 +86,48 @@ class ClassFileLocator extends FilterIterator
         $tokens   = token_get_all($contents);
         $count    = count($tokens);
         $t_trait  = defined('T_TRAIT') ? T_TRAIT : -1; // For preserve PHP 5.3 compatibility
-        for ($i = 0; $i < $count; $i++) {
+        for ($i = 0; $i < $count; $i++)
+        {
             $token = $tokens[$i];
-            if (!is_array($token)) {
+            if (!is_array($token))
+            {
                 // single character token found; skip
                 $i++;
                 continue;
             }
-            switch ($token[0]) {
+            switch ($token[0])
+            {
                 case T_NAMESPACE:
                     // Namespace found; grab it for later
                     $namespace = '';
-                    for ($i++; $i < $count; $i++) {
+                    for ($i++; $i < $count; $i++)
+                    {
                         $token = $tokens[$i];
-                        if (is_string($token)) {
-                            if (';' === $token) {
+                        if (is_string($token))
+                        {
+                            if (';' === $token)
+                            {
                                 $saveNamespace = false;
                                 break;
                             }
-                            if ('{' === $token) {
+                            if ('{' === $token)
+                            {
                                 $saveNamespace = true;
                                 break;
                             }
                             continue;
                         }
                         list($type, $content, $line) = $token;
-                        switch ($type) {
+                        switch ($type)
+                        {
                             case T_STRING:
                             case T_NS_SEPARATOR:
                                 $namespace .= $content;
                                 break;
                         }
                     }
-                    if ($saveNamespace) {
+                    if ($saveNamespace)
+                    {
                         $savedNamespace = $namespace;
                     }
                     break;
@@ -120,26 +137,33 @@ class ClassFileLocator extends FilterIterator
                     // Abstract class, class, interface or trait found
 
                     // Get the classname
-                    for ($i++; $i < $count; $i++) {
+                    for ($i++; $i < $count; $i++)
+                    {
                         $token = $tokens[$i];
-                        if (is_string($token)) {
+                        if (is_string($token))
+                        {
                             continue;
                         }
                         list($type, $content, $line) = $token;
-                        if (T_STRING == $type) {
+                        if (T_STRING == $type)
+                        {
                             // If a classname was found, set it in the object, and
                             // return boolean true (found)
-                            if (!isset($namespace) || null === $namespace) {
-                                if (isset($saveNamespace) && $saveNamespace) {
+                            if (!isset($namespace) || null === $namespace)
+                            {
+                                if (isset($saveNamespace) && $saveNamespace)
+                                {
                                     $namespace = $savedNamespace;
-                                } else {
+                                }
+                                else
+                                {
                                     $namespace = null;
                                 }
-
                             }
                             $class = (null === $namespace) ? $content : $namespace . '\\' . $content;
                             $file->addClass($class);
-                            if ($namespace) {
+                            if ($namespace)
+                            {
                                 $file->addNamespace($namespace);
                             }
                             $namespace = null;
@@ -152,7 +176,8 @@ class ClassFileLocator extends FilterIterator
             }
         }
         $classes = $file->getClasses();
-        if (!empty($classes)) {
+        if (!empty($classes))
+        {
             return true;
         }
         // No class-type tokens found; return false

@@ -53,21 +53,29 @@ class HttpResponse
      */
     public function sendHeaders()
     {
-        if (count($this->headers) || (200 != $this->statusCode)) {
+        if (count($this->headers) || (200 != $this->statusCode))
+        {
             $this->canSendHeaders(true);
-        } elseif (200 == $this->statusCode) {
+        }
+        elseif (200 == $this->statusCode)
+        {
             return;
         }
         $httpCodeSent = false;
-        foreach ($this->headers as $header) {
-            if (!$httpCodeSent && $this->statusCode) {
+        foreach ($this->headers as $header)
+        {
+            if (!$httpCodeSent && $this->statusCode)
+            {
                 header($header['name'] . ': ' . $header['value'], $header['replace'], $this->statusCode);
                 $httpCodeSent = true;
-            } else {
+            }
+            else
+            {
                 header($header['name'] . ': ' . $header['value'], $header['replace']);
             }
         }
-        if (!$httpCodeSent) {
+        if (!$httpCodeSent)
+        {
             header('HTTP/1.1 ' . $this->statusCode);
         }
     }
@@ -86,17 +94,20 @@ class HttpResponse
     public function setHeader($name, $value, $replace = false)
     {
         $name  = $this->_normalizeHeader($name);
-        $value = (string) $value;
-        if ($replace) {
-            foreach ($this->headers as $key => $header) {
-                if ($name == $header['name']) {
+        $value = (string)$value;
+        if ($replace)
+        {
+            foreach ($this->headers as $key => $header)
+            {
+                if ($name == $header['name'])
+                {
                     unset($this->headers[$key]);
                 }
             }
         }
         $this->headers[] = array(
-            'name'    => $name,
-            'value'   => $value,
+            'name' => $name,
+            'value' => $value,
             'replace' => $replace,
         );
 
@@ -112,8 +123,10 @@ class HttpResponse
     public function getHeader($name)
     {
         $name = $this->_normalizeHeader($name);
-        foreach ($this->headers as $header) {
-            if ($header['name'] == $name) {
+        foreach ($this->headers as $header)
+        {
+            if ($header['name'] == $name)
+            {
                 return $header['value'];
             }
         }
@@ -139,7 +152,8 @@ class HttpResponse
     public function canSendHeaders($throw = false)
     {
         $ok = headers_sent($file, $line);
-        if ($ok && $throw) {
+        if ($ok && $throw)
+        {
             throw new Exception\RuntimeException('Cannot send headers; headers already sent in ' . $file . ', line ' . $line);
         }
         return !$ok;
@@ -154,9 +168,10 @@ class HttpResponse
      */
     public function setStatusCode($code)
     {
-        if (!is_int($code) || (100 > $code) || (599 < $code)) {
+        if (!is_int($code) || (100 > $code) || (599 < $code))
+        {
             throw new Exception\InvalidArgumentException('Invalid HTTP response'
-            . ' code:' . $code);
+                . ' code:' . $code);
         }
         $this->statusCode = $code;
         return $this;
@@ -180,7 +195,7 @@ class HttpResponse
      */
     public function setContent($content)
     {
-        $this->content = (string) $content;
+        $this->content = (string)$content;
         $this->setHeader('content-length', strlen($content));
         return $this;
     }
@@ -203,7 +218,7 @@ class HttpResponse
      */
     protected function _normalizeHeader($name)
     {
-        $filtered = str_replace(array('-', '_'), ' ', (string) $name);
+        $filtered = str_replace(array('-', '_'), ' ', (string)$name);
         $filtered = ucwords(strtolower($filtered));
         $filtered = str_replace(' ', '-', $filtered);
         return $filtered;

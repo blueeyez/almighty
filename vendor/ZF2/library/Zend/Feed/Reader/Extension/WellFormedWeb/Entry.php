@@ -12,7 +12,7 @@ namespace Zend\Feed\Reader\Extension\WellFormedWeb;
 use Zend\Feed\Reader\Extension;
 
 /**
-*/
+ */
 class Entry extends Extension\AbstractEntry
 {
     /**
@@ -23,13 +23,15 @@ class Entry extends Extension\AbstractEntry
     public function getCommentFeedLink()
     {
         $name = 'commentRss';
-        if (array_key_exists($name, $this->data)) {
+        if (array_key_exists($name, $this->data))
+        {
             return $this->data[$name];
         }
 
         $data = $this->xpath->evaluate('string(' . $this->getXpathPrefix() . '/wfw:' . $name . ')');
 
-        if (!$data) {
+        if (!$data)
+        {
             $data = null;
         }
 

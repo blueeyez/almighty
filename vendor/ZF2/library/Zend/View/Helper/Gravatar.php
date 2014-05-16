@@ -69,10 +69,10 @@ class Gravatar extends AbstractHtmlElement
      * @var array
      */
     protected $options = array(
-        'img_size'    => 80,
+        'img_size' => 80,
         'default_img' => self::DEFAULT_MM,
-        'rating'      => self::RATING_G,
-        'secure'      => null,
+        'rating' => self::RATING_G,
+        'secure' => null,
     );
 
     /**
@@ -86,20 +86,23 @@ class Gravatar extends AbstractHtmlElement
      *
      * @see    http://pl.gravatar.com/site/implement/url
      * @see    http://pl.gravatar.com/site/implement/url More information about gravatar's service.
-     * @param  string|null $email   Email address.
-     * @param  null|array  $options Options
-     * @param  array       $attribs Attributes for image tag (title, alt etc.)
+     * @param  string|null $email Email address.
+     * @param  null|array $options Options
+     * @param  array $attribs Attributes for image tag (title, alt etc.)
      * @return Gravatar
      */
     public function __invoke($email = "", $options = array(), $attribs = array())
     {
-        if (!empty($email)) {
+        if (!empty($email))
+        {
             $this->setEmail($email);
         }
-        if (!empty($options)) {
+        if (!empty($options))
+        {
             $this->setOptions($options);
         }
-        if (!empty($attribs)) {
+        if (!empty($attribs))
+        {
             $this->setAttribs($attribs);
         }
 
@@ -124,9 +127,11 @@ class Gravatar extends AbstractHtmlElement
      */
     public function setOptions(array $options)
     {
-        foreach ($options as $key => $value) {
+        foreach ($options as $key => $value)
+        {
             $method = 'set' . str_replace(' ', '', ucwords(str_replace('_', ' ', $key)));
-            if (method_exists($this, $method)) {
+            if (method_exists($this, $method))
+            {
                 $this->{$method}($value);
             }
         }
@@ -142,7 +147,7 @@ class Gravatar extends AbstractHtmlElement
     protected function getAvatarUrl()
     {
         $src = $this->getGravatarUrl()
-            . '/'   . ($this->emailIsHashed ? $this->getEmail() : md5($this->getEmail()))
+            . '/' . ($this->emailIsHashed ? $this->getEmail() : md5($this->getEmail()))
             . '?s=' . $this->getImgSize()
             . '&d=' . $this->getDefaultImg()
             . '&r=' . $this->getRating();
@@ -238,8 +243,8 @@ class Gravatar extends AbstractHtmlElement
      */
     public function setEmail($email)
     {
-        $this->emailIsHashed = (bool) preg_match('/^[A-Za-z0-9]{32}$/', $email);
-        $this->email = strtolower(trim($email));
+        $this->emailIsHashed = (bool)preg_match('/^[A-Za-z0-9]{32}$/', $email);
+        $this->email         = strtolower(trim($email));
         return $this;
     }
 
@@ -261,7 +266,7 @@ class Gravatar extends AbstractHtmlElement
      */
     public function setImgSize($imgSize)
     {
-        $this->options['img_size'] = (int) $imgSize;
+        $this->options['img_size'] = (int)$imgSize;
         return $this;
     }
 
@@ -287,7 +292,8 @@ class Gravatar extends AbstractHtmlElement
      */
     public function setRating($rating)
     {
-        switch ($rating) {
+        switch ($rating)
+        {
             case self::RATING_G:
             case self::RATING_PG:
             case self::RATING_R:
@@ -322,7 +328,7 @@ class Gravatar extends AbstractHtmlElement
      */
     public function setSecure($flag)
     {
-        $this->options['secure'] = ($flag === null) ? null : (bool) $flag;
+        $this->options['secure'] = ($flag === null) ? null : (bool)$flag;
         return $this;
     }
 
@@ -333,7 +339,8 @@ class Gravatar extends AbstractHtmlElement
      */
     public function getSecure()
     {
-        if ($this->options['secure'] === null) {
+        if ($this->options['secure'] === null)
+        {
             return (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
         }
 

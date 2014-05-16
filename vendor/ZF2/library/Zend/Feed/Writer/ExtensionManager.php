@@ -28,7 +28,8 @@ class ExtensionManager implements ExtensionManagerInterface
      */
     public function __construct(ExtensionPluginManager $pluginManager = null)
     {
-        if (null === $pluginManager) {
+        if (null === $pluginManager)
+        {
             $pluginManager = new ExtensionPluginManager();
         }
         $this->pluginManager = $pluginManager;
@@ -46,7 +47,8 @@ class ExtensionManager implements ExtensionManagerInterface
      */
     public function __call($method, $args)
     {
-        if (!method_exists($this->pluginManager, $method)) {
+        if (!method_exists($this->pluginManager, $method))
+        {
             throw new Exception\BadMethodCallException(sprintf(
                 'Method by name of %s does not exist in %s',
                 $method,

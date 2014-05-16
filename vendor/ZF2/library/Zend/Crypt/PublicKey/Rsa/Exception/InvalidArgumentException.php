@@ -17,4 +17,5 @@ use Zend\Crypt\Exception;
 class InvalidArgumentException
     extends Exception\InvalidArgumentException
     implements ExceptionInterface
-{}
+{
+}

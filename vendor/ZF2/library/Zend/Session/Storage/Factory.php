@@ -20,23 +20,26 @@ abstract class Factory
     /**
      * Create and return a StorageInterface instance
      *
-     * @param  string                             $type
-     * @param  array|Traversable                  $options
+     * @param  string $type
+     * @param  array|Traversable $options
      * @return StorageInterface
      * @throws Exception\InvalidArgumentException for unrecognized $type or individual options
      */
     public static function factory($type, $options = array())
     {
-        if (!is_string($type)) {
+        if (!is_string($type))
+        {
             throw new Exception\InvalidArgumentException(sprintf(
                 '%s expects the $type argument to be a string class name; received "%s"',
                 __METHOD__,
                 (is_object($type) ? get_class($type) : gettype($type))
             ));
         }
-        if (!class_exists($type)) {
+        if (!class_exists($type))
+        {
             $class = __NAMESPACE__ . '\\' . $type;
-            if (!class_exists($class)) {
+            if (!class_exists($class))
+            {
                 throw new Exception\InvalidArgumentException(sprintf(
                     '%s expects the $type argument to be a valid class name; received "%s"',
                     __METHOD__,
@@ -46,10 +49,12 @@ abstract class Factory
             $type = $class;
         }
 
-        if ($options instanceof Traversable) {
+        if ($options instanceof Traversable)
+        {
             $options = ArrayUtils::iteratorToArray($options);
         }
-        if (!is_array($options)) {
+        if (!is_array($options))
+        {
             throw new Exception\InvalidArgumentException(sprintf(
                 '%s expects the $options argument to be an array or Traversable; received "%s"',
                 __METHOD__,
@@ -57,7 +62,8 @@ abstract class Factory
             ));
         }
 
-        switch (true) {
+        switch (true)
+        {
             case (in_array('Zend\Session\Storage\AbstractSessionArrayStorage', class_parents($type))):
                 return static::createSessionArrayStorage($type, $options);
                 break;
@@ -80,8 +86,8 @@ abstract class Factory
     /**
      * Create a storage object from an ArrayStorage class (or a descendent)
      *
-     * @param  string       $type
-     * @param  array        $options
+     * @param  string $type
+     * @param  array $options
      * @return ArrayStorage
      */
     protected static function createArrayStorage($type, $options)
@@ -90,8 +96,10 @@ abstract class Factory
         $flags         = ArrayObject::ARRAY_AS_PROPS;
         $iteratorClass = 'ArrayIterator';
 
-        if (isset($options['input']) && null !== $options['input']) {
-            if (!is_array($options['input'])) {
+        if (isset($options['input']) && null !== $options['input'])
+        {
+            if (!is_array($options['input']))
+            {
                 throw new Exception\InvalidArgumentException(sprintf(
                     '%s expects the "input" option to be an array; received "%s"',
                     $type,
@@ -101,12 +109,15 @@ abstract class Factory
             $input = $options['input'];
         }
 
-        if (isset($options['flags'])) {
+        if (isset($options['flags']))
+        {
             $flags = $options['flags'];
         }
 
-        if (isset($options['iterator_class'])) {
-            if (!class_exists($options['iterator_class'])) {
+        if (isset($options['iterator_class']))
+        {
+            if (!class_exists($options['iterator_class']))
+            {
                 throw new Exception\InvalidArgumentException(sprintf(
                     '%s expects the "iterator_class" option to be a valid class; received "%s"',
                     $type,
@@ -122,19 +133,21 @@ abstract class Factory
     /**
      * Create a storage object from a class extending AbstractSessionArrayStorage
      *
-     * @param  string                             $type
-     * @param  array                              $options
+     * @param  string $type
+     * @param  array $options
      * @return AbstractSessionArrayStorage
      * @throws Exception\InvalidArgumentException if the input option is invalid
      */
     protected static function createSessionArrayStorage($type, array $options)
     {
         $input = null;
-        if (isset($options['input'])) {
+        if (isset($options['input']))
+        {
             if (null !== $options['input']
                 && !is_array($options['input'])
                 && !$input instanceof ArrayAccess
-            ) {
+            )
+            {
                 throw new Exception\InvalidArgumentException(sprintf(
                     '%s expects the "input" option to be null, an array, or to implement ArrayAccess; received "%s"',
                     $type,

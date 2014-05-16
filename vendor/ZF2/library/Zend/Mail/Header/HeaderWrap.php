@@ -21,15 +21,18 @@ abstract class HeaderWrap
     /**
      * Wrap a long header line
      *
-     * @param  string          $value
+     * @param  string $value
      * @param  HeaderInterface $header
      * @return string
      */
     public static function wrap($value, HeaderInterface $header)
     {
-        if ($header instanceof UnstructuredInterface) {
+        if ($header instanceof UnstructuredInterface)
+        {
             return static::wrapUnstructuredHeader($value, $header);
-        } elseif ($header instanceof StructuredInterface) {
+        }
+        elseif ($header instanceof StructuredInterface)
+        {
             return static::wrapStructuredHeader($value, $header);
         }
         return $value;
@@ -40,14 +43,15 @@ abstract class HeaderWrap
      *
      * Wrap at 78 characters or before, based on whitespace.
      *
-     * @param string          $value
+     * @param string $value
      * @param HeaderInterface $header
      * @return string
      */
     protected static function wrapUnstructuredHeader($value, HeaderInterface $header)
     {
         $encoding = $header->getEncoding();
-        if ($encoding == 'ASCII') {
+        if ($encoding == 'ASCII')
+        {
             return wordwrap($value, 78, Headers::FOLDING);
         }
         return static::mimeEncodeValue($value, $encoding, 78);
@@ -56,7 +60,7 @@ abstract class HeaderWrap
     /**
      * Wrap a structured header line
      *
-     * @param  string              $value
+     * @param  string $value
      * @param  StructuredInterface $header
      * @return string
      */
@@ -67,9 +71,11 @@ abstract class HeaderWrap
         $length = strlen($value);
         $lines  = array();
         $temp   = '';
-        for ($i = 0; $i < $length; $i++) {
+        for ($i = 0; $i < $length; $i++)
+        {
             $temp .= $value[$i];
-            if ($value[$i] == $delimiter) {
+            if ($value[$i] == $delimiter)
+            {
                 $lines[] = $temp;
                 $temp    = '';
             }
@@ -85,7 +91,7 @@ abstract class HeaderWrap
      *
      * @param  string $value
      * @param  string $encoding
-     * @param  int    $lineLength maximum line-length, by default 998
+     * @param  int $lineLength maximum line-length, by default 998
      * @return string Returns the mime encode value without the last line ending
      */
     public static function mimeEncodeValue($value, $encoding, $lineLength = 998)

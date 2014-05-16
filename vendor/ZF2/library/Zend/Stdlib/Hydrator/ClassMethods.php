@@ -25,6 +25,7 @@ class ClassMethods extends AbstractHydrator implements HydratorOptionsInterface
 {
     /**
      * Flag defining whether array keys are underscore-separated (true) or camel case (false)
+     *
      * @var bool
      */
     protected $underscoreSeparatedKeys = true;
@@ -36,6 +37,7 @@ class ClassMethods extends AbstractHydrator implements HydratorOptionsInterface
 
     /**
      * Define if extract values will use camel case or name with underscore
+     *
      * @param bool|array $underscoreSeparatedKeys
      */
     public function __construct($underscoreSeparatedKeys = true)
@@ -52,20 +54,24 @@ class ClassMethods extends AbstractHydrator implements HydratorOptionsInterface
     }
 
     /**
-     * @param  array|Traversable                 $options
+     * @param  array|Traversable $options
      * @return ClassMethods
      * @throws Exception\InvalidArgumentException
      */
     public function setOptions($options)
     {
-        if ($options instanceof Traversable) {
+        if ($options instanceof Traversable)
+        {
             $options = ArrayUtils::iteratorToArray($options);
-        } elseif (!is_array($options)) {
+        }
+        elseif (!is_array($options))
+        {
             throw new Exception\InvalidArgumentException(
                 'The options parameter must be an array or a Traversable'
             );
         }
-        if (isset($options['underscoreSeparatedKeys'])) {
+        if (isset($options['underscoreSeparatedKeys']))
+        {
             $this->setUnderscoreSeparatedKeys($options['underscoreSeparatedKeys']);
         }
 
@@ -73,7 +79,7 @@ class ClassMethods extends AbstractHydrator implements HydratorOptionsInterface
     }
 
     /**
-     * @param  bool      $underscoreSeparatedKeys
+     * @param  bool $underscoreSeparatedKeys
      * @return ClassMethods
      */
     public function setUnderscoreSeparatedKeys($underscoreSeparatedKeys)
@@ -96,58 +102,69 @@ class ClassMethods extends AbstractHydrator implements HydratorOptionsInterface
      *
      * Extracts the getter/setter of the given $object.
      *
-     * @param  object                           $object
+     * @param  object $object
      * @return array
      * @throws Exception\BadMethodCallException for a non-object $object
      */
     public function extract($object)
     {
-        if (!is_object($object)) {
+        if (!is_object($object))
+        {
             throw new Exception\BadMethodCallException(sprintf(
                 '%s expects the provided $object to be a PHP object)', __METHOD__
             ));
         }
 
         $filter = null;
-        if ($object instanceof FilterProviderInterface) {
+        if ($object instanceof FilterProviderInterface)
+        {
             $filter = new FilterComposite(
                 array($object->getFilter()),
                 array(new MethodMatchFilter("getFilter"))
             );
-        } else {
+        }
+        else
+        {
             $filter = $this->filterComposite;
         }
 
-        $transform = function ($letters) {
+        $transform  = function ($letters)
+        {
             $letter = array_shift($letters);
 
             return '_' . strtolower($letter);
         };
         $attributes = array();
-        $methods = get_class_methods($object);
+        $methods    = get_class_methods($object);
 
-        foreach ($methods as $method) {
+        foreach ($methods as $method)
+        {
             if (
-                !$filter->filter(
-                    get_class($object) . '::' . $method
-                )
-            ) {
+            !$filter->filter(
+                get_class($object) . '::' . $method
+            )
+            )
+            {
                 continue;
             }
 
-            if (!$this->callableMethodFilter->filter(get_class($object) . '::' . $method)) {
+            if (!$this->callableMethodFilter->filter(get_class($object) . '::' . $method))
+            {
                 continue;
             }
 
             $attribute = $method;
-            if (preg_match('/^get/', $method)) {
+            if (preg_match('/^get/', $method))
+            {
                 $attribute = substr($method, 3);
-                if (!property_exists($object, $attribute)) {
+                if (!property_exists($object, $attribute))
+                {
                     $attribute = lcfirst($attribute);
                 }
             }
 
-            if ($this->underscoreSeparatedKeys) {
+            if ($this->underscoreSeparatedKeys)
+            {
                 $attribute = preg_replace_callback('/([A-Z])/', $transform, $attribute);
             }
             $attributes[$attribute] = $this->extractValue($attribute, $object->$method(), $object);
@@ -161,31 +178,36 @@ class ClassMethods extends AbstractHydrator implements HydratorOptionsInterface
      *
      * Hydrates an object by getter/setter methods of the object.
      *
-     * @param  array                            $data
-     * @param  object                           $object
+     * @param  array $data
+     * @param  object $object
      * @return object
      * @throws Exception\BadMethodCallException for a non-object $object
      */
     public function hydrate(array $data, $object)
     {
-        if (!is_object($object)) {
+        if (!is_object($object))
+        {
             throw new Exception\BadMethodCallException(sprintf(
                 '%s expects the provided $object to be a PHP object)', __METHOD__
             ));
         }
 
-        $transform = function ($letters) {
+        $transform = function ($letters)
+        {
             $letter = substr(array_shift($letters), 1, 1);
 
             return ucfirst($letter);
         };
 
-        foreach ($data as $property => $value) {
+        foreach ($data as $property => $value)
+        {
             $method = 'set' . ucfirst($property);
-            if ($this->underscoreSeparatedKeys) {
+            if ($this->underscoreSeparatedKeys)
+            {
                 $method = preg_replace_callback('/(_[a-z])/i', $transform, $method);
             }
-            if (is_callable(array($object, $method))) {
+            if (is_callable(array($object, $method)))
+            {
                 $value = $this->hydrateValue($property, $value, $data);
                 $object->$method($value);
             }

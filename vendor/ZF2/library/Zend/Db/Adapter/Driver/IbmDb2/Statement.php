@@ -139,7 +139,8 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
      */
     public function setResource($resource)
     {
-        if (get_resource_type($resource) !== 'DB2 Statement') {
+        if (get_resource_type($resource) !== 'DB2 Statement')
+        {
             throw new Exception\InvalidArgumentException('Resource must be of type DB2 Statement');
         }
         $this->resource = $resource;
@@ -163,17 +164,20 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
      */
     public function prepare($sql = null)
     {
-        if ($this->isPrepared) {
+        if ($this->isPrepared)
+        {
             throw new Exception\RuntimeException('This statement has been prepared already');
         }
 
-        if ($sql == null) {
+        if ($sql == null)
+        {
             $sql = $this->sql;
         }
 
         $this->resource = db2_prepare($this->db2, $sql);
 
-        if ($this->resource === false) {
+        if ($this->resource === false)
+        {
             throw new Exception\RuntimeException(db2_stmt_errormsg(), db2_stmt_error());
         }
 
@@ -199,38 +203,51 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
      */
     public function execute($parameters = null)
     {
-        if (!$this->isPrepared) {
+        if (!$this->isPrepared)
+        {
             $this->prepare();
         }
 
         /** START Standard ParameterContainer Merging Block */
-        if (!$this->parameterContainer instanceof ParameterContainer) {
-            if ($parameters instanceof ParameterContainer) {
+        if (!$this->parameterContainer instanceof ParameterContainer)
+        {
+            if ($parameters instanceof ParameterContainer)
+            {
                 $this->parameterContainer = $parameters;
-                $parameters = null;
-            } else {
+                $parameters               = null;
+            }
+            else
+            {
                 $this->parameterContainer = new ParameterContainer();
             }
         }
 
-        if (is_array($parameters)) {
+        if (is_array($parameters))
+        {
             $this->parameterContainer->setFromArray($parameters);
         }
         /** END Standard ParameterContainer Merging Block */
 
-        if ($this->profiler) {
+        if ($this->profiler)
+        {
             $this->profiler->profilerStart($this);
         }
 
-        set_error_handler(function () {}, E_WARNING); // suppress warnings
+        set_error_handler(
+            function ()
+            {
+            }, E_WARNING
+        ); // suppress warnings
         $response = db2_execute($this->resource, $this->parameterContainer->getPositionalArray());
         restore_error_handler();
 
-        if ($this->profiler) {
+        if ($this->profiler)
+        {
             $this->profiler->profilerFinish();
         }
 
-        if ($response === false) {
+        if ($response === false)
+        {
             throw new Exception\RuntimeException(db2_stmt_errormsg($this->resource));
         }
 

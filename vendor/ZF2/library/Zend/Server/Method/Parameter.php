@@ -56,7 +56,8 @@ class Parameter
      */
     public function __construct($options = null)
     {
-        if (is_array($options)) {
+        if (is_array($options))
+        {
             $this->setOptions($options);
         }
     }
@@ -69,9 +70,11 @@ class Parameter
      */
     public function setOptions(array $options)
     {
-        foreach ($options as $key => $value) {
+        foreach ($options as $key => $value)
+        {
             $method = 'set' . ucfirst($key);
-            if (method_exists($this, $method)) {
+            if (method_exists($this, $method))
+            {
                 $this->$method($value);
             }
         }
@@ -108,7 +111,7 @@ class Parameter
      */
     public function setDescription($description)
     {
-        $this->description = (string) $description;
+        $this->description = (string)$description;
         return $this;
     }
 
@@ -130,7 +133,7 @@ class Parameter
      */
     public function setName($name)
     {
-        $this->name = (string) $name;
+        $this->name = (string)$name;
         return $this;
     }
 
@@ -152,7 +155,7 @@ class Parameter
      */
     public function setOptional($flag)
     {
-        $this->optional = (bool) $flag;
+        $this->optional = (bool)$flag;
         return $this;
     }
 
@@ -174,7 +177,7 @@ class Parameter
      */
     public function setType($type)
     {
-        $this->type = (string) $type;
+        $this->type = (string)$type;
         return $this;
     }
 
@@ -196,11 +199,11 @@ class Parameter
     public function toArray()
     {
         return array(
-            'type'         => $this->getType(),
-            'name'         => $this->getName(),
-            'optional'     => $this->isOptional(),
+            'type' => $this->getType(),
+            'name' => $this->getName(),
+            'optional' => $this->isOptional(),
             'defaultValue' => $this->getDefaultValue(),
-            'description'  => $this->getDescription(),
+            'description' => $this->getDescription(),
         );
     }
 }

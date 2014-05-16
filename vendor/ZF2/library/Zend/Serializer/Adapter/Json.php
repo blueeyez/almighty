@@ -27,7 +27,8 @@ class Json extends AbstractAdapter
      */
     public function setOptions($options)
     {
-        if (!$options instanceof JsonOptions) {
+        if (!$options instanceof JsonOptions)
+        {
             $options = new JsonOptions($options);
         }
 
@@ -42,7 +43,8 @@ class Json extends AbstractAdapter
      */
     public function getOptions()
     {
-        if ($this->options === null) {
+        if ($this->options === null)
+        {
             $this->options = new JsonOptions();
         }
         return $this->options;
@@ -60,16 +62,21 @@ class Json extends AbstractAdapter
     {
         $options    = $this->getOptions();
         $cycleCheck = $options->getCycleCheck();
-        $opts = array(
+        $opts       = array(
             'enableJsonExprFinder' => $options->getEnableJsonExprFinder(),
-            'objectDecodeType'     => $options->getObjectDecodeType(),
+            'objectDecodeType' => $options->getObjectDecodeType(),
         );
 
-        try {
+        try
+        {
             return ZendJson::encode($value, $cycleCheck, $opts);
-        } catch (\InvalidArgumentException $e) {
+        }
+        catch (\InvalidArgumentException $e)
+        {
             throw new Exception\InvalidArgumentException('Serialization failed: ' . $e->getMessage(), 0, $e);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e)
+        {
             throw new Exception\RuntimeException('Serialization failed: ' . $e->getMessage(), 0, $e);
         }
     }
@@ -84,11 +91,16 @@ class Json extends AbstractAdapter
      */
     public function unserialize($json)
     {
-        try {
+        try
+        {
             $ret = ZendJson::decode($json, $this->getOptions()->getObjectDecodeType());
-        } catch (\InvalidArgumentException $e) {
+        }
+        catch (\InvalidArgumentException $e)
+        {
             throw new Exception\InvalidArgumentException('Unserialization failed: ' . $e->getMessage(), 0, $e);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e)
+        {
             throw new Exception\RuntimeException('Unserialization failed: ' . $e->getMessage(), 0, $e);
         }
 

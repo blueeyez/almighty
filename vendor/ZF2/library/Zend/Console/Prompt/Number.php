@@ -34,11 +34,11 @@ class Number extends Line
     /**
      * Ask the user for a number.
      *
-     * @param string    $promptText     The prompt text to display in console
-     * @param bool      $allowEmpty     Is empty response allowed?
-     * @param bool      $allowFloat     Are floating (non-decimal) numbers allowed?
-     * @param int   $min            Minimum value (inclusive)
-     * @param int   $max            Maximum value (inclusive)
+     * @param string $promptText The prompt text to display in console
+     * @param bool $allowEmpty Is empty response allowed?
+     * @param bool $allowFloat Are floating (non-decimal) numbers allowed?
+     * @param int $min Minimum value (inclusive)
+     * @param int $max Maximum value (inclusive)
      */
     public function __construct(
         $promptText = 'Please enter a number: ',
@@ -47,23 +47,28 @@ class Number extends Line
         $min = null,
         $max = null
     ) {
-        if ($promptText !== null) {
+        if ($promptText !== null)
+        {
             $this->setPromptText($promptText);
         }
 
-        if ($allowEmpty !== null) {
+        if ($allowEmpty !== null)
+        {
             $this->setAllowEmpty($allowEmpty);
         }
 
-        if ($min !== null) {
+        if ($min !== null)
+        {
             $this->setMin($min);
         }
 
-        if ($max !== null) {
+        if ($max !== null)
+        {
             $this->setMax($max);
         }
 
-        if ($allowFloat !== null) {
+        if ($allowFloat !== null)
+        {
             $this->setAllowFloat($allowFloat);
         }
     }
@@ -78,33 +83,47 @@ class Number extends Line
         /**
          * Ask for a number and validate it.
          */
-        do {
-            $valid = true;
+        do
+        {
+            $valid  = true;
             $number = parent::show();
-            if ($number === "" && !$this->allowEmpty) {
+            if ($number === "" && !$this->allowEmpty)
+            {
                 $valid = false;
-            } elseif ($number === "") {
+            }
+            elseif ($number === "")
+            {
                 $number = null;
-            } elseif (!is_numeric($number)) {
+            }
+            elseif (!is_numeric($number))
+            {
                 $this->getConsole()->writeLine("$number is not a number\n");
                 $valid = false;
-            } elseif (!$this->allowFloat && (round($number) != $number)) {
+            }
+            elseif (!$this->allowFloat && (round($number) != $number))
+            {
                 $this->getConsole()->writeLine("Please enter a non-floating number, i.e. " . round($number) . "\n");
                 $valid = false;
-            } elseif ($this->max !== null && $number > $this->max) {
+            }
+            elseif ($this->max !== null && $number > $this->max)
+            {
                 $this->getConsole()->writeLine("Please enter a number not greater than " . $this->max . "\n");
                 $valid = false;
-            } elseif ($this->min !== null && $number < $this->min) {
+            }
+            elseif ($this->min !== null && $number < $this->min)
+            {
                 $this->getConsole()->writeLine("Please enter a number not smaller than " . $this->min . "\n");
                 $valid = false;
             }
-        } while (!$valid);
+        }
+        while (!$valid);
 
         /**
          * Cast proper type
          */
-        if ($number !== null) {
-            $number = $this->allowFloat ? (double) $number : (int) $number;
+        if ($number !== null)
+        {
+            $number = $this->allowFloat ? (double)$number : (int)$number;
         }
 
         return $this->lastResponse = $number;

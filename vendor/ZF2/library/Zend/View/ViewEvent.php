@@ -21,9 +21,9 @@ class ViewEvent extends Event
     /**#@+
      * View events triggered by eventmanager
      */
-    const EVENT_RENDERER = 'renderer';
+    const EVENT_RENDERER      = 'renderer';
     const EVENT_RENDERER_POST = 'renderer.post';
-    const EVENT_RESPONSE = 'response';
+    const EVENT_RESPONSE      = 'response';
     /**#@-*/
 
     /**
@@ -170,7 +170,8 @@ class ViewEvent extends Event
      */
     public function getParam($name, $default = null)
     {
-        switch ($name) {
+        switch ($name)
+        {
             case 'model':
                 return $this->getModel();
             case 'renderer':
@@ -211,12 +212,15 @@ class ViewEvent extends Event
     public function setParams($params)
     {
         parent::setParams($params);
-        if (!is_array($params) && !$params instanceof ArrayAccess) {
+        if (!is_array($params) && !$params instanceof ArrayAccess)
+        {
             return $this;
         }
 
-        foreach (array('model', 'renderer', 'request', 'response', 'result') as $param) {
-            if (isset($params[$param])) {
+        foreach (array('model', 'renderer', 'request', 'response', 'result') as $param)
+        {
+            if (isset($params[$param]))
+            {
                 $method = 'set' . $param;
                 $this->$method($params[$param]);
             }
@@ -233,7 +237,8 @@ class ViewEvent extends Event
      */
     public function setParam($name, $value)
     {
-        switch ($name) {
+        switch ($name)
+        {
             case 'model':
                 $this->setModel($value);
                 break;

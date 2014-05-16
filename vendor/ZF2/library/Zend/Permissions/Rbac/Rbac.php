@@ -22,7 +22,7 @@ class Rbac extends AbstractIterator
     protected $createMissingRoles = false;
 
     /**
-     * @param  bool                     $createMissingRoles
+     * @param  bool $createMissingRoles
      * @return \Zend\Permissions\Rbac\Rbac
      */
     public function setCreateMissingRoles($createMissingRoles)
@@ -43,28 +43,34 @@ class Rbac extends AbstractIterator
     /**
      * Add a child.
      *
-     * @param  string|RoleInterface               $child
-     * @param  array|RoleInterface|null           $parents
+     * @param  string|RoleInterface $child
+     * @param  array|RoleInterface|null $parents
      * @return self
      * @throws Exception\InvalidArgumentException
      */
     public function addRole($child, $parents = null)
     {
-        if (is_string($child)) {
+        if (is_string($child))
+        {
             $child = new Role($child);
         }
-        if (!$child instanceof RoleInterface) {
+        if (!$child instanceof RoleInterface)
+        {
             throw new Exception\InvalidArgumentException(
                 'Child must be a string or implement Zend\Permissions\Rbac\RoleInterface'
             );
         }
 
-        if ($parents) {
-            if (!is_array($parents)) {
+        if ($parents)
+        {
+            if (!is_array($parents))
+            {
                 $parents = array($parents);
             }
-            foreach ($parents as $parent) {
-                if ($this->createMissingRoles && !$this->hasRole($parent)) {
+            foreach ($parents as $parent)
+            {
+                if ($this->createMissingRoles && !$this->hasRole($parent))
+                {
                     $this->addRole($parent);
                 }
                 $this->getRole($parent)->addChild($child);
@@ -84,11 +90,14 @@ class Rbac extends AbstractIterator
      */
     public function hasRole($objectOrName)
     {
-        try {
+        try
+        {
             $this->getRole($objectOrName);
 
             return true;
-        } catch (Exception\InvalidArgumentException $e) {
+        }
+        catch (Exception\InvalidArgumentException $e)
+        {
             return false;
         }
     }
@@ -102,15 +111,18 @@ class Rbac extends AbstractIterator
      */
     public function getRole($objectOrName)
     {
-        if (!is_string($objectOrName) && !$objectOrName instanceof RoleInterface) {
+        if (!is_string($objectOrName) && !$objectOrName instanceof RoleInterface)
+        {
             throw new Exception\InvalidArgumentException(
                 'Expected string or implement \Zend\Permissions\Rbac\RoleInterface'
             );
         }
 
         $it = new RecursiveIteratorIterator($this, RecursiveIteratorIterator::CHILD_FIRST);
-        foreach ($it as $leaf) {
-            if ((is_string($objectOrName) && $leaf->getName() == $objectOrName) || $leaf == $objectOrName) {
+        foreach ($it as $leaf)
+        {
+            if ((is_string($objectOrName) && $leaf->getName() == $objectOrName) || $leaf == $objectOrName)
+            {
                 return $leaf;
             }
         }
@@ -124,30 +136,39 @@ class Rbac extends AbstractIterator
     /**
      * Determines if access is granted by checking the role and child roles for permission.
      *
-     * @param  RoleInterface|string             $role
-     * @param  string                           $permission
+     * @param  RoleInterface|string $role
+     * @param  string $permission
      * @param  AssertionInterface|Callable|null $assert
      * @return bool
      */
     public function isGranted($role, $permission, $assert = null)
     {
-        if ($assert) {
-            if ($assert instanceof AssertionInterface) {
-                if (!$assert->assert($this)) {
+        if ($assert)
+        {
+            if ($assert instanceof AssertionInterface)
+            {
+                if (!$assert->assert($this))
+                {
                     return false;
                 }
-            } elseif (is_callable($assert)) {
-                if (!$assert($this)) {
+            }
+            elseif (is_callable($assert))
+            {
+                if (!$assert($this))
+                {
                     return false;
                 }
-            } else {
+            }
+            else
+            {
                 throw new Exception\InvalidArgumentException(
                     'Assertions must be a Callable or an instance of Zend\Permissions\Rbac\AssertionInterface'
                 );
             }
         }
 
-        if ($this->getRole($role)->hasPermission($permission)) {
+        if ($this->getRole($role)->hasPermission($permission))
+        {
             return true;
         }
 

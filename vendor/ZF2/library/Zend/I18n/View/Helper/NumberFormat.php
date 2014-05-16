@@ -59,7 +59,8 @@ class NumberFormat extends AbstractHelper
      */
     public function __construct()
     {
-        if (!extension_loaded('intl')) {
+        if (!extension_loaded('intl'))
+        {
             throw new Exception\ExtensionNotLoadedException(sprintf(
                 '%s component requires the intl PHP extension',
                 __NAMESPACE__
@@ -71,41 +72,47 @@ class NumberFormat extends AbstractHelper
      * Format a number
      *
      * @param  int|float $number
-     * @param  int       $formatStyle
-     * @param  int       $formatType
-     * @param  string    $locale
-     * @param  int       $decimals
+     * @param  int $formatStyle
+     * @param  int $formatType
+     * @param  string $locale
+     * @param  int $decimals
      * @return string
      */
     public function __invoke(
         $number,
         $formatStyle = null,
-        $formatType  = null,
-        $locale      = null,
-        $decimals    = null
+        $formatType = null,
+        $locale = null,
+        $decimals = null
     ) {
-        if (null === $locale) {
+        if (null === $locale)
+        {
             $locale = $this->getLocale();
         }
-        if (null === $formatStyle) {
+        if (null === $formatStyle)
+        {
             $formatStyle = $this->getFormatStyle();
         }
-        if (null === $formatType) {
+        if (null === $formatType)
+        {
             $formatType = $this->getFormatType();
         }
-        if (!is_int($decimals) || $decimals < 0) {
+        if (!is_int($decimals) || $decimals < 0)
+        {
             $decimals = $this->getDecimals();
         }
 
         $formatterId = md5($formatStyle . "\0" . $locale . "\0" . $decimals);
 
-        if (!isset($this->formatters[$formatterId])) {
+        if (!isset($this->formatters[$formatterId]))
+        {
             $this->formatters[$formatterId] = new NumberFormatter(
                 $locale,
                 $formatStyle
             );
 
-            if ($decimals !== null) {
+            if ($decimals !== null)
+            {
                 $this->formatters[$formatterId]->setAttribute(NumberFormatter::MIN_FRACTION_DIGITS, $decimals);
                 $this->formatters[$formatterId]->setAttribute(NumberFormatter::MAX_FRACTION_DIGITS, $decimals);
             }
@@ -122,7 +129,7 @@ class NumberFormat extends AbstractHelper
      */
     public function setFormatStyle($formatStyle)
     {
-        $this->formatStyle = (int) $formatStyle;
+        $this->formatStyle = (int)$formatStyle;
         return $this;
     }
 
@@ -133,7 +140,8 @@ class NumberFormat extends AbstractHelper
      */
     public function getFormatStyle()
     {
-        if (null === $this->formatStyle) {
+        if (null === $this->formatStyle)
+        {
             $this->formatStyle = NumberFormatter::DECIMAL;
         }
 
@@ -148,7 +156,7 @@ class NumberFormat extends AbstractHelper
      */
     public function setFormatType($formatType)
     {
-        $this->formatType = (int) $formatType;
+        $this->formatType = (int)$formatType;
         return $this;
     }
 
@@ -159,7 +167,8 @@ class NumberFormat extends AbstractHelper
      */
     public function getFormatType()
     {
-        if (null === $this->formatType) {
+        if (null === $this->formatType)
+        {
             $this->formatType = NumberFormatter::TYPE_DEFAULT;
         }
         return $this->formatType;
@@ -195,7 +204,7 @@ class NumberFormat extends AbstractHelper
      */
     public function setLocale($locale)
     {
-        $this->locale = (string) $locale;
+        $this->locale = (string)$locale;
         return $this;
     }
 
@@ -206,7 +215,8 @@ class NumberFormat extends AbstractHelper
      */
     public function getLocale()
     {
-        if ($this->locale === null) {
+        if ($this->locale === null)
+        {
             $this->locale = Locale::getDefault();
         }
 

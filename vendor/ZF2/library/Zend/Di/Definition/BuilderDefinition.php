@@ -34,13 +34,17 @@ class BuilderDefinition implements DefinitionInterface
      */
     public function createClassesFromArray(array $builderData)
     {
-        foreach ($builderData as $className => $classInfo) {
+        foreach ($builderData as $className => $classInfo)
+        {
             $class = new Builder\PhpClass();
             $class->setName($className);
-            foreach ($classInfo as $type => $typeData) {
-                switch (strtolower($type)) {
+            foreach ($classInfo as $type => $typeData)
+            {
+                switch (strtolower($type))
+                {
                     case 'supertypes':
-                        foreach ($typeData as $superType) {
+                        foreach ($typeData as $superType)
+                        {
                             $class->addSuperType($superType);
                         }
                         break;
@@ -49,17 +53,18 @@ class BuilderDefinition implements DefinitionInterface
                         break;
                     case 'methods':
                     case 'method':
-                        foreach ($typeData as $injectionMethodName => $injectionMethodData) {
+                        foreach ($typeData as $injectionMethodName => $injectionMethodData)
+                        {
                             $injectionMethod = new Builder\InjectionMethod();
                             $injectionMethod->setName($injectionMethodName);
-                            foreach ($injectionMethodData as $parameterName => $parameterType) {
-                                $parameterType = ($parameterType) ?: null; // force empty string to null
+                            foreach ($injectionMethodData as $parameterName => $parameterType)
+                            {
+                                $parameterType = ($parameterType) ? : null; // force empty string to null
                                 $injectionMethod->addParameter($parameterName, $parameterType);
                             }
                             $class->addInjectionMethod($injectionMethod);
                         }
                         break;
-
                 }
             }
             $this->addClass($class);
@@ -69,7 +74,7 @@ class BuilderDefinition implements DefinitionInterface
     /**
      * Add class
      *
-     * @param  Builder\PhpClass  $phpClass
+     * @param  Builder\PhpClass $phpClass
      * @return BuilderDefinition
      */
     public function addClass(Builder\PhpClass $phpClass)
@@ -84,7 +89,7 @@ class BuilderDefinition implements DefinitionInterface
      *
      * This method is a factory that can be used in place of addClass().
      *
-     * @param  null|string      $name Optional name of class to assign
+     * @param  null|string $name Optional name of class to assign
      * @return Builder\PhpClass
      */
     public function createClass($name = null)
@@ -93,7 +98,8 @@ class BuilderDefinition implements DefinitionInterface
         /* @var $class Builder\PhpClass */
         $class = new $builderClass();
 
-        if (null !== $name) {
+        if (null !== $name)
+        {
             $class->setName($name);
         }
 
@@ -105,7 +111,7 @@ class BuilderDefinition implements DefinitionInterface
     /**
      * Set the class to use with {@link createClass()}
      *
-     * @param  string            $class
+     * @param  string $class
      * @return BuilderDefinition
      */
     public function setClassBuilder($class)
@@ -136,7 +142,8 @@ class BuilderDefinition implements DefinitionInterface
         $classNames = array();
 
         /* @var $class Builder\PhpClass */
-        foreach ($this->classes as $class) {
+        foreach ($this->classes as $class)
+        {
             $classNames[] = $class->getName();
         }
 
@@ -148,8 +155,10 @@ class BuilderDefinition implements DefinitionInterface
      */
     public function hasClass($class)
     {
-        foreach ($this->classes as $classObj) {
-            if ($classObj->getName() === $class) {
+        foreach ($this->classes as $classObj)
+        {
+            if ($classObj->getName() === $class)
+            {
                 return true;
             }
         }
@@ -158,13 +167,15 @@ class BuilderDefinition implements DefinitionInterface
     }
 
     /**
-     * @param  string                $name
+     * @param  string $name
      * @return bool|Builder\PhpClass
      */
     protected function getClass($name)
     {
-        foreach ($this->classes as $classObj) {
-            if ($classObj->getName() === $name) {
+        foreach ($this->classes as $classObj)
+        {
+            if ($classObj->getName() === $name)
+            {
                 return $classObj;
             }
         }
@@ -180,7 +191,8 @@ class BuilderDefinition implements DefinitionInterface
     {
         $class = $this->getClass($class);
 
-        if ($class === false) {
+        if ($class === false)
+        {
             throw new Exception\RuntimeException('Cannot find class object in this builder definition.');
         }
 
@@ -194,7 +206,8 @@ class BuilderDefinition implements DefinitionInterface
     public function getInstantiator($class)
     {
         $class = $this->getClass($class);
-        if ($class === false) {
+        if ($class === false)
+        {
             throw new Exception\RuntimeException('Cannot find class object in this builder definition.');
         }
 
@@ -209,7 +222,8 @@ class BuilderDefinition implements DefinitionInterface
     {
         /* @var $class \Zend\Di\Definition\Builder\PhpClass */
         $class = $this->getClass($class);
-        if ($class === false) {
+        if ($class === false)
+        {
             throw new Exception\RuntimeException('Cannot find class object in this builder definition.');
         }
 
@@ -223,14 +237,16 @@ class BuilderDefinition implements DefinitionInterface
     public function getMethods($class)
     {
         $class = $this->getClass($class);
-        if ($class === false) {
+        if ($class === false)
+        {
             throw new Exception\RuntimeException('Cannot find class object in this builder definition.');
         }
-        $methods = $class->getInjectionMethods();
+        $methods     = $class->getInjectionMethods();
         $methodNames = array();
 
         /* @var $methodObj Builder\InjectionMethod */
-        foreach ($methods as $methodObj) {
+        foreach ($methods as $methodObj)
+        {
             $methodNames[] = $methodObj->getName();
         }
 
@@ -244,14 +260,17 @@ class BuilderDefinition implements DefinitionInterface
     public function hasMethod($class, $method)
     {
         $class = $this->getClass($class);
-        if ($class === false) {
+        if ($class === false)
+        {
             throw new Exception\RuntimeException('Cannot find class object in this builder definition.');
         }
         $methods = $class->getInjectionMethods();
 
         /* @var $methodObj Builder\InjectionMethod */
-        foreach ($methods as $methodObj) {
-            if ($methodObj->getName() === $method) {
+        foreach ($methods as $methodObj)
+        {
+            if ($methodObj->getName() === $method)
+            {
                 return true;
             }
         }
@@ -265,17 +284,21 @@ class BuilderDefinition implements DefinitionInterface
     public function hasMethodParameters($class, $method)
     {
         $class = $this->getClass($class);
-        if ($class === false) {
+        if ($class === false)
+        {
             return false;
         }
         $methods = $class->getInjectionMethods();
         /* @var $methodObj Builder\InjectionMethod */
-        foreach ($methods as $methodObj) {
-            if ($methodObj->getName() === $method) {
+        foreach ($methods as $methodObj)
+        {
+            if ($methodObj->getName() === $method)
+            {
                 $method = $methodObj;
             }
         }
-        if (!$method instanceof Builder\InjectionMethod) {
+        if (!$method instanceof Builder\InjectionMethod)
+        {
             return false;
         }
 
@@ -292,27 +315,32 @@ class BuilderDefinition implements DefinitionInterface
     {
         $class = $this->getClass($class);
 
-        if ($class === false) {
+        if ($class === false)
+        {
             throw new Exception\RuntimeException('Cannot find class object in this builder definition.');
         }
 
         $methods = $class->getInjectionMethods();
 
         /* @var $methodObj Builder\InjectionMethod */
-        foreach ($methods as $methodObj) {
-            if ($methodObj->getName() === $method) {
+        foreach ($methods as $methodObj)
+        {
+            if ($methodObj->getName() === $method)
+            {
                 $method = $methodObj;
             }
         }
 
-        if (!$method instanceof Builder\InjectionMethod) {
+        if (!$method instanceof Builder\InjectionMethod)
+        {
             throw new Exception\RuntimeException('Cannot find method object for method ' . $method . ' in this builder definition.');
         }
 
         $methodParameters = array();
 
         /* @var $method Builder\InjectionMethod */
-        foreach ($method->getParameters() as $name => $info) {
+        foreach ($method->getParameters() as $name => $info)
+        {
             $methodParameters[$class->getName() . '::' . $method->getName() . ':' . $name] = $info;
         }
 

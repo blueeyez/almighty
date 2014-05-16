@@ -25,14 +25,16 @@ class ForwardFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $plugins)
     {
         $services = $plugins->getServiceLocator();
-        if (!$services instanceof ServiceLocatorInterface) {
+        if (!$services instanceof ServiceLocatorInterface)
+        {
             throw new ServiceNotCreatedException(sprintf(
                 '%s requires that the application service manager has been injected; none found',
                 __CLASS__
             ));
         }
 
-        if (!$services->has('ControllerLoader')) {
+        if (!$services->has('ControllerLoader'))
+        {
             throw new ServiceNotCreatedException(sprintf(
                 '%s requires that the application service manager contains a "%s" service; none found',
                 __CLASS__,

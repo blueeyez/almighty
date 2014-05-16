@@ -41,10 +41,13 @@ class Tag extends AbstractGenerator
 
         // transport any properties via accessors and mutators from reflection to codegen object
         $reflectionClass = new ReflectionClass($reflectionTag);
-        foreach ($reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-            if (substr($method->getName(), 0, 3) == 'get') {
+        foreach ($reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC) as $method)
+        {
+            if (substr($method->getName(), 0, 3) == 'get')
+            {
                 $propertyName = substr($method->getName(), 3);
-                if (method_exists($codeGenDocBlockTag, 'set' . $propertyName)) {
+                if (method_exists($codeGenDocBlockTag, 'set' . $propertyName))
+                {
                     $codeGenDocBlockTag->{'set' . $propertyName}($reflectionTag->{'get' . $propertyName}());
                 }
             }
