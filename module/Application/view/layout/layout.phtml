@@ -1,0 +1,116 @@
+<?php echo $this->doctype(); ?>
+
+<html lang="en">
+    <head>
+        <?php echo $this->headTitle(); ?>
+
+        <?php echo $this->headMeta()
+            ->setCharset('UTF-8')
+            ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+            ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+            ->appendName('robots', 'index, follow, noarchive')
+            ->appendName('author', 'Mihai Grama')
+            ->appendName('description', 'restaurante limba engleza - cambridge')
+            ->appendName('keywords', 'examen engleza, restaurante engleza, limba engleza, examen, restaurante');
+        ?>
+
+        <!-- Le styles -->
+        <?php echo $this->headLink()
+            ->appendStylesheet($this->basePath('css/normalize.css'))
+            ->appendStylesheet($this->basePath('css/foundation.css'))
+            ->appendStylesheet($this->basePath('css/cupertino/jquery-ui-1.10.3.custom.min.css'))
+        ?>
+
+        <!-- Scripts -->
+        <?php echo $this->headScript()
+            ->appendFile($this->basePath('js/jquery-1.10.2.min.js'), $type = 'text/javascript')
+            ->appendFile($this->basePath('js/jquery-ui-1.10.3.custom.min.js'), $type = 'text/javascript')
+            ->appendFile($this->basePath('js/vendor/custom.modernizr.js'), $type = 'text/javascript');
+        ?>
+    </head>
+    <body>
+        <div class="row">
+            <div class="large-3 columns">
+                <h1><img src="<?php echo $this->basePath('img/logo-eec.jpg');?>" alt="European Examinations Centre"/></h1>
+            </div>
+            <div class="large-9 columns">
+                <img src="<?php echo $this->basePath('img/logo-cambridge.jpg');?>" class="right" alt="Cambridge"/>
+            </div>
+        </div>
+
+        <!-- End Header and Nav -->
+        <div class="row">
+            <div class="contain-to-grid sticky">
+                <nav class="top-bar" data-topbar>
+                    <ul class="title-area">
+                        <li class="name"></li>
+                        <li class="toggle-topbar menu-icon"><a href="#"><span>Meniu</span></a></li>
+                    </ul>
+
+                    <section class="top-bar-section">
+                        <!-- Right Nav Section -->
+                        <ul class="right">
+                            <li class="has-form">
+                                <div class="row collapse">
+                                    <div class="large-8 small-9 columns">
+                                        <input type="text" placeholder="Cauta ..." style="height: 2.1em !important;">
+                                    </div>
+                                    <div class="large-4 small-3 columns">
+                                        <a href="#" class="button expand">Search</a>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+
+
+                        <!-- Left Nav Section -->
+                        <ul class="left">
+                            <li><a href="<?php echo $this->url('home');?>">Home</a></li>
+                            <li><a href="<?php echo $this->url('restaurante', array('action' => 'index'));?>">Restaurante</a></li>
+                            <li><a href="<?php echo $this->url('inscriere', array('action' => 'index'));?>">Inscriere</a></li>
+                            <li><a href="<?php echo $this->url('galerie', array('action' => 'index'));?>">Galerie</a></li>
+                            <li><a href="<?php echo $this->url('promo', array('action' => 'index'));?>">Promo</a></li>
+                            <li><a href="<?php echo $this->url('despre-noi', array('action' => 'index'));?>">Despre Noi</a></li>
+                            <li><a href="<?php echo $this->url('contact', array('action' => 'index'));?>">Contact</a></li>
+                        </ul>
+                    </section>
+                </nav>
+
+            </div>
+            <hr />
+        </div>
+
+        <?php echo $this->content; ?>
+
+        <!-- Footer -->
+
+        <footer class="row">
+            <div class="large-12 columns">
+                <hr />
+                <div class="row">
+                    <div class="large-4 columns">
+                        <p>© 2013 EEC. All rights reserved.</p>
+                    </div>
+                    <div class="large-8 columns">
+                        <ul class="inline-list right">
+                            <li><a href="<?php echo $this->url('restaurante', array('action' => 'index'));?>">Restaurante</a></li>
+                            <li><a href="<?php echo $this->url('inscriere', array('action' => 'index'));?>">Inscriere</a></li>
+                            <li><a href="<?php echo $this->url('galerie', array('action' => 'index'));?>">Galerie</a></li>
+                            <li><a href="<?php echo $this->url('promo', array('action' => 'index'));?>">Promo</a></li>
+                            <li><a href="<?php echo $this->url('despre-noi', array('action' => 'index'));?>">Despre Noi</a></li>
+                            <li><a href="<?php echo $this->url('contact', array('action' => 'index'));?>">Contact</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <?php echo $this->InlineScript()
+            ->appendFile($this->basePath() . '/js/vendor/jquery.js')
+            ->appendFile($this->basePath() . '/js/foundation.min.js');
+        ?>
+        <script>
+            $(document).foundation();
+        </script>
+    </body>
+</html>

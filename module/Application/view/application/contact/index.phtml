@@ -1,0 +1,156 @@
+<?php $this->headTitle($title);
+        $form = $this->form;
+        $form->setAttribute('action', $this->url('contact'));
+        $form->prepare();
+?>
+
+<!-- Main Page Content and Sidebar -->
+
+<div class="row">
+    <div class="large-12 columns">
+        <img src="<?php echo $this->basePath('img/slides/contact-EEC.jpg');?>" alt="Contact eeCentre.ro" />
+
+        <hr/>
+    </div>
+</div>
+
+<div class="row">
+
+    <!-- Contact Details -->
+    <div class="large-9 columns">
+
+        <h3>Get in Touch!</h3>
+        <p>We'd love to hear from you. You can either reach out to us as a whole and one of our awesome team members will get back to you, or if you have a specific question reach out to one of our staff. We love getting email all day <em>all day</em>.</p>
+
+        <div class="section-container tabs" data-section>
+            <h6 style="color: red">
+            <?php
+            if ($successful){
+                echo $successful;
+            }
+            ?>
+            </h6>
+            <section class="section">
+                <h5 class="title"><a href="#panel1">Contact Our Company</a></h5>
+                <div class="content" data-slug="panel1">
+                    <?php echo $this->form()->openTag($form); ?>
+                        <div class="row collapse">
+                            <div class="large-2 columns">
+                                <?php $name =  $form->get('name');
+                                $name->setLabelAttributes(array('class' => 'inline'));
+                                echo $this->formLabel($name);
+                                ?>
+                            </div>
+                            <div class="large-10 columns">
+                                <?php echo $this->formInput($name); ?>
+                            </div>
+                        </div>
+                        <div class="row collapse">
+                            <?php echo $this->formElementErrors($name, array('style' => 'color: red')); ?>
+                        </div>
+                        <div class="row collapse">
+                            <div class="large-2 columns">
+                                <?php
+                                $email =  $form->get('email');
+                                $email->setLabelAttributes(array('class' => 'inline'));
+                                echo $this->formLabel($email); ?>
+                            </div>
+                            <div class="large-10 columns">
+                                <?php echo $this->formInput($email); ?>
+                            </div>
+                        </div>
+                        <div class="row collapse">
+                            <?php echo $this->formElementErrors($email, array('style' => 'color: red')); ?>
+                        </div>
+                        <?php $message = $form->get('message');
+                        echo $this->formLabel($message);
+                         echo $this->formElementErrors($message, array('style' => 'color: red'));
+                        echo $this->formElement($message) ;
+                        ?>
+                    <div class="row collapse" style="color: red">
+
+                    </div>
+                        <?php echo $this->formSubmit($form->get('submit')); ?>
+                    <?php echo $this->form()->closeTag(); ?>
+                </div>
+            </section>
+            <section class="section">
+                <h1 class="title">Specific Person</h1>
+                <div class="row">
+                    <div class="large-4 small-4 columns">
+                        <img src="http://placehold.it/400x300&text=[Person Pic]">
+                    </div>
+                    <div class="large-8 small-8 columns">
+                        <h4>Xulescu Escu</h4>
+                        <div class="row">
+                            <p>Person's position</p>
+                            <p>Contact</p>
+                            <p>Other info</p>
+                        </div>
+                    </div>
+                    <hr/>
+                </div>
+                <div class="row">
+                    <div class="large-4 small-4 columns">
+                        <img src="http://placehold.it/400x300&text=[Person Pic]">
+                    </div>
+                    <div class="large-8 small-8 columns">
+                        <h4>Xulescu Escu</h4>
+                        <div class="row">
+                            <p>Person's position</p>
+                            <p>Contact</p>
+                            <p>Other info</p>
+                        </div>
+                    </div>
+                    <hr/>
+                </div>
+                <div class="row">
+                    <div class="large-4 small-4 columns">
+                        <img src="http://placehold.it/400x300&text=[Person Pic]">
+                    </div>
+                    <div class="large-8 small-8 columns">
+                        <h4>Xulescu Escu</h4>
+                        <div class="row">
+                            <p>Person's position</p>
+                            <p>Contact</p>
+                            <p>Other info</p>
+                        </div>
+                    </div>
+                    <hr/>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- End Contact Details -->
+
+
+    <!-- Sidebar -->
+
+
+    <div class="large-3 columns">
+        <h5>Map</h5>
+        <!-- Clicking this placeholder fires the mapModal Reveal modal -->
+        <p>
+            <a href="" data-reveal-id="mapModal"><img src="http://placehold.it/400x280"></a><br />
+            <a href="" data-reveal-id="mapModal">View Map</a>
+        </p>
+        <p>
+            123 Awesome St.<br />
+            Barsoom, MA 95155
+        </p>
+    </div>
+    <!-- End Sidebar -->
+</div>
+
+<!-- End Main Content and Sidebar -->
+
+<!-- Map Modal -->
+
+<div class="reveal-modal small" id="mapModal" data-reveal>
+    <h4>Where We Are</h4>
+    <p><img src="http://placehold.it/800x600" /></p>
+
+    <!-- Any anchor with this class will close the modal. This also inherits certain styles, which can be overriden. -->
+    <a href="#" class="close-reveal-modal">×</a>
+</div>
